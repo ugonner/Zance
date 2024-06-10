@@ -1,5 +1,5 @@
-import Logo from "@/components/Logo";
-import ThemeToggler from "@/components/ThemeToggler";
+import Logo from "@/components/common/Logo";
+import ThemeToggler from "@/components/common/ThemeToggler";
 import Link from "next/link";
 
 export default function Home() {

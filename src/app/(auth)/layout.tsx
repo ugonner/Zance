@@ -1,5 +1,5 @@
-import Logo from "@/components/Logo";
-import ThemeToggler from "@/components/ThemeToggler";
+import Logo from "@/components/common/Logo";
+import ThemeToggler from "@/components/common/ThemeToggler";
 import Image from "next/image";
 
 export default function RootLayout({

@@ -1,18 +1,22 @@
 "use client";
 
-import EmailRegistrationForm from "@/components/EmailRegistrationForm";
-import Heading from "@/components/Heading";
-import LoginForm from "@/components/LoginForm";
-import Title from "@/components/Title";
+import EmailRegistrationDialog from "@/components/auth/EmailRegistrationDialog";
+import Heading from "@/components/common/Heading";
+import LoginDialog from "@/components/auth/LoginDialog";
+import Title from "@/components/common/Title";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
-import React from "react";
+import { FormType } from "@/types";
+import React, { useState } from "react";
 
 const AuthPage = () => {
   const { toast } = useToast();
+
+  const [openForm, setOpenForm] = useState<FormType>(null);
+
   return (
-    <div className="flex flex-col items-center justify-center gap-2">
+    <div className="flex flex-col items-center justify-center gap-4">
       <Heading className="text-center">Set up your account</Heading>
 
       <Title className="text-center">
@@ -34,7 +38,14 @@ const AuthPage = () => {
         >
           Register with LinkedIn
         </Button>
-        <EmailRegistrationForm />
+        <Button
+          size="lg"
+          className="flex-1"
+          variant="secondary"
+          onClick={() => setOpenForm("emailRegistration")}
+        >
+          Register with Email
+        </Button>
       </div>
 
       <Separator />
@@ -43,7 +54,20 @@ const AuthPage = () => {
         Already have an account?
       </Title>
 
-      <LoginForm isLink />
+      <Button
+        variant="link"
+        onClick={() => setOpenForm("login")}
+        className="-mt-4"
+      >
+        Login with Email
+      </Button>
+
+      <LoginDialog isOpen={openForm === "login"} setOpenForm={setOpenForm} />
+
+      <EmailRegistrationDialog
+        isOpen={openForm === "emailRegistration"}
+        setOpenForm={setOpenForm}
+      />
     </div>
   );
 };

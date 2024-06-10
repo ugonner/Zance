@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import {
@@ -24,22 +23,18 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/button";
-import Heading from "./Heading";
-import Title from "./Title";
-import { cn } from "@/lib/utils";
-import LoginForm from "./LoginForm";
+import { Button } from "../ui/button";
+import Heading from "../common/Heading";
+import PasswordInput from "./PasswordInput";
+import { FormType } from "@/types";
 
-// The isLink prop defines how the button that opens registration form will be
-const EmailRegistrationForm = ({
-  isLink = false,
-  className = "",
+const EmailRegistrationDialog = ({
+  isOpen,
+  setOpenForm,
 }: {
-  isLink?: boolean;
-  className?: string;
+  isOpen: boolean;
+  setOpenForm: (formName: FormType) => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const formSchema = z
     .object({
       email: z
@@ -66,31 +61,30 @@ const EmailRegistrationForm = ({
     defaultValues: {
       email: "",
       password: "",
+      passwordConfirm: "",
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Registration Form Values", values);
-    setIsOpen(false);
+    setOpenForm(null);
     form.reset();
   };
 
-  //   <Button variant="link" className="text-sm">
-  //     Register
-  //   </Button>;
+  // A handler that will be executed when a user clicks login with email in the bottom section of the form
+  const handleOpenLoginForm = () => {
+    setOpenForm("login");
+    form.reset();
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size={isLink ? "sm" : "lg"}
-          className={cn("flex-1", isLink && "text-sm")}
-          variant={isLink ? "link" : "secondary"}
-        >
-          Register with Email
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) =>
+        open ? setOpenForm("emailRegistration") : setOpenForm(null)
+      }
+    >
+      <DialogContent className="!py-12">
         <DialogHeader>
           <Heading type="secondary" className="text-center">
             Welcome to Zance
@@ -123,13 +117,11 @@ const EmailRegistrationForm = ({
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Enter password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <PasswordInput
+                  label="Enter password"
+                  placeholder="********"
+                  field={field}
+                />
               )}
             />
 
@@ -137,13 +129,11 @@ const EmailRegistrationForm = ({
               control={form.control}
               name="passwordConfirm"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Re-enter password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <PasswordInput
+                  label="Re-enter password"
+                  placeholder="********"
+                  field={field}
+                />
               )}
             />
 
@@ -151,15 +141,23 @@ const EmailRegistrationForm = ({
           </form>
         </Form>
 
-        <DialogFooter className="!flex-col !items-center !justify-center gap-2">
-          <Title className="!text-sm text-gray-600 dark:text-gray-400">
+        <DialogFooter className="!flex-col !items-center !justify-center">
+          <DialogDescription className="text-center">
             Don&apos;t have an account?
-          </Title>
-          <LoginForm isLink className="text-sm" />
+          </DialogDescription>
+
+          <Button
+            variant="link"
+            className="text-sm"
+            size="sm"
+            onClick={handleOpenLoginForm}
+          >
+            Login with Email
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default EmailRegistrationForm;
+export default EmailRegistrationDialog;

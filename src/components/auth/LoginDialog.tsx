@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 import {
@@ -24,21 +23,18 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "./ui/button";
-import Heading from "./Heading";
-import Title from "./Title";
-import EmailRegistrationForm from "./EmailRegistrationForm";
-import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import Heading from "../common/Heading";
+import PasswordInput from "./PasswordInput";
+import { FormType } from "@/types";
 
-const LoginForm = ({
-  isLink = false,
-  className = "",
+const LoginDialog = ({
+  isOpen,
+  setOpenForm,
 }: {
-  isLink?: boolean;
-  className?: string;
+  isOpen: boolean;
+  setOpenForm: (formName: FormType) => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const formSchema = z.object({
     email: z
       .string()
@@ -61,28 +57,28 @@ const LoginForm = ({
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Login Form Values", values);
-    setIsOpen(false);
+    setOpenForm(null);
+    form.reset();
+  };
+
+  // A handler that will be executed when a user clicks register with email in the bottom section of the form
+  const handleOpenEmailRegistrationForm = () => {
+    setOpenForm("emailRegistration");
     form.reset();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size={isLink ? "sm" : "lg"}
-          className={cn("flex-1", className)}
-          variant={isLink ? "link" : "secondary"}
-        >
-          Login with Email
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => (open ? setOpenForm("login") : setOpenForm(null))}
+    >
+      <DialogContent className="!py-12">
         <DialogHeader>
           <Heading type="secondary" className="text-center">
             Welcome back
           </Heading>
           <DialogDescription className="text-center">
-            Create, Share, and Experience Extraordinary Events
+            Please login into your account to continue
           </DialogDescription>
         </DialogHeader>
 
@@ -109,28 +105,34 @@ const LoginForm = ({
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Enter password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="********" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <PasswordInput
+                  label="Enter password"
+                  placeholder="********"
+                  field={field}
+                />
               )}
             />
             <Button type="submit">Login</Button>
           </form>
         </Form>
 
-        <DialogFooter className="!flex-col !items-center !justify-center gap-2">
-          <Title className="!text-sm text-gray-600 dark:text-gray-400">
+        <DialogFooter className="!flex-col !items-center !justify-center">
+          <DialogDescription className="text-center">
             Don&apos;t have an account?
-          </Title>
-          <EmailRegistrationForm isLink className="text-sm" />
+          </DialogDescription>
+
+          <Button
+            variant="link"
+            size="sm"
+            className="text-sm"
+            onClick={handleOpenEmailRegistrationForm}
+          >
+            Register with Email
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default LoginForm;
+export default LoginDialog;
