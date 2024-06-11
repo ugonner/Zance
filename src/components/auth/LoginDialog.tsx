@@ -49,10 +49,6 @@ const LoginDialog = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -72,7 +68,7 @@ const LoginDialog = ({
       open={isOpen}
       onOpenChange={(open) => (open ? setOpenForm("login") : setOpenForm(null))}
     >
-      <DialogContent className="!py-12">
+      <DialogContent>
         <DialogHeader>
           <Heading type="secondary" className="text-center">
             Welcome back
@@ -85,7 +81,7 @@ const LoginDialog = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="mx-auto flex w-full max-w-[80%] flex-col justify-center gap-6 py-4"
+            className="mx-auto flex w-full flex-col justify-center gap-6 py-4"
           >
             <FormField
               control={form.control}

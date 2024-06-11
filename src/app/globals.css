@@ -74,3 +74,18 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* React Phone Input 2 Style Overrides */
+
+/* .country-list {
+  background-color: #f3f4f6 !important;
+}
+
+.country:hover {
+  background-color: #e5e7eb !important;
+}
+
+.country-name,
+.dial-code {
+  color: #0f0f0f !important;
+} */
