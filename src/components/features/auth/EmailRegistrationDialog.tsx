@@ -27,8 +27,8 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 
-import { Button } from "../ui/button";
-import Heading from "../common/Heading";
+import { Button } from "../../ui/button";
+import Heading from "../../ui/common/Heading";
 import PasswordInput from "./PasswordInput";
 import Link from "next/link";
 import CustomPhoneInput from "./CustomPhoneInput";

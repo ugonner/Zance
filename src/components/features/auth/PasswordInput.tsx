@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { FormControl, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { Input } from "../ui/input";
+import { FormControl, FormItem, FormLabel, FormMessage } from "../../ui/form";
+import { Input } from "../../ui/input";
 import { ControllerRenderProps } from "react-hook-form";
 import { EmailRegistrationFormData, LoginFormData } from "@/types";
 import { Eye, EyeOff } from "lucide-react";

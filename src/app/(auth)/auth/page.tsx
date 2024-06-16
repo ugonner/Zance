@@ -1,9 +1,9 @@
 "use client";
 
-import EmailRegistrationDialog from "@/components/auth/EmailRegistrationDialog";
-import Heading from "@/components/common/Heading";
-import LoginDialog from "@/components/auth/LoginDialog";
-import Title from "@/components/common/Title";
+import EmailRegistrationDialog from "@/components/features/auth/EmailRegistrationDialog";
+import Heading from "@/components/ui/common/Heading";
+import LoginDialog from "@/components/features/auth/LoginDialog";
+import Title from "@/components/ui/common/Title";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";

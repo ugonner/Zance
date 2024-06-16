@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
 import React from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -17,10 +15,6 @@ const CustomPhoneInput = ({
   onChange,
   placeholder,
 }: PhoneInputProps) => {
-  const { theme } = useTheme();
-
-  const isLightMode = theme === "light";
-
   return (
     <PhoneInput
       country="us"

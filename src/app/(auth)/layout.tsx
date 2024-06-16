@@ -1,8 +1,8 @@
-import Logo from "@/components/common/Logo";
-import ThemeToggler from "@/components/common/ThemeToggler";
+import Logo from "@/components/ui/common/Logo";
+import ThemeToggler from "@/components/ui/common/ThemeToggler";
 import Image from "next/image";
 
-export default function RootLayout({
+export default function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

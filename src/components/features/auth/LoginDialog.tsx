@@ -23,8 +23,8 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "../ui/button";
-import Heading from "../common/Heading";
+import { Button } from "../../ui/button";
+import Heading from "../../ui/common/Heading";
 import PasswordInput from "./PasswordInput";
 import { FormType } from "@/types";
 
