@@ -3,12 +3,12 @@
 import EmailRegistrationDialog from "@/components/features/auth/EmailRegistrationDialog";
 import Heading from "@/components/ui/common/Heading";
 import LoginDialog from "@/components/features/auth/LoginDialog";
-import Title from "@/components/ui/common/Title";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { FormType } from "@/types";
 import React, { useState } from "react";
+import Description from "@/components/ui/common/Description";
 
 const AuthPage = () => {
   const { toast } = useToast();
@@ -19,9 +19,9 @@ const AuthPage = () => {
     <div className="flex flex-col items-center justify-center gap-4">
       <Heading className="text-center">Set up your account</Heading>
 
-      <Title className="text-center">
+      <Description className="text-center">
         Create events, manage attendee lists and expand your horizon
-      </Title>
+      </Description>
 
       <div className="my-4 flex flex-wrap items-center gap-4">
         <Button
@@ -50,9 +50,9 @@ const AuthPage = () => {
 
       <Separator />
 
-      <Title className="text-gray-600 dark:text-gray-400">
+      <Description className="text-gray-600 dark:text-gray-400">
         Already have an account?
-      </Title>
+      </Description>
 
       <Button
         variant="link"

@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     unoptimized: true,
-    domains: ["github.com", "unsplash.com"],
+    domains: ["github.com"],
   },
 };
 

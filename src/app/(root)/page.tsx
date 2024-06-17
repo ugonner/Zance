@@ -1,8 +1,10 @@
 import MyEvents from "@/components/features/events/MyEvents";
 import Heading from "@/components/ui/common/Heading";
-import Title from "@/components/ui/common/Title";
+import Description from "@/components/ui/common/Description";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { SendHorizontal } from "lucide-react";
 
 export default function Home() {
   return (
@@ -10,25 +12,36 @@ export default function Home() {
       {/* Home Page Zance Banner */}
       <div className="mx-auto w-11/12 rounded-sm bg-gray-200 px-4 py-8 dark:bg-gray-800">
         <Heading type="secondary">Welcome to Zance</Heading>
-        <Title className="mt-1 max-w-2xl">
+        <Description className="mt-1 max-w-2xl">
           We have built a platform that feels more like a friendly assistant
           than a complicated software.
-        </Title>
+        </Description>
       </div>
 
       <div className="flex flex-col justify-center gap-2">
         <Heading type="tertiary">Event List</Heading>
         <Tabs defaultValue="mine">
-          <TabsList className="flex w-fit items-center justify-start gap-2">
+          <TabsList className="flex max-w-fit items-center justify-start gap-2">
             <TabsTrigger value="mine">My Events</TabsTrigger>
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="attending">Attending</TabsTrigger>
             <TabsTrigger value="saved">Saved</TabsTrigger>
             <TabsTrigger value="past">Past</TabsTrigger>
           </TabsList>
-          <h2 className="mb-6 mt-4 w-fit rounded-sm border px-4 py-2">
-            SEARCH INPUT HERE
-          </h2>
+
+          {/* Search Input */}
+          <div className="relative max-w-md">
+            <Input
+              type="text"
+              placeholder="Enter event code"
+              className="mb-8 mt-4 px-4"
+            />
+            <SendHorizontal
+              size={30}
+              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-secondary/85"
+            />
+          </div>
+
           <TabsContent value="mine">
             <MyEvents />
           </TabsContent>

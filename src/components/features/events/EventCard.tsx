@@ -8,7 +8,7 @@ import React from "react";
 const EventCard = ({ event }: { event: any }) => {
   return (
     <Link
-      href="#"
+      href={`/events/${event?.id}`}
       className="group col-span-full overflow-hidden rounded-sm md:col-span-2 lg:col-span-3"
     >
       <figure className="relative aspect-video overflow-hidden rounded-sm">
