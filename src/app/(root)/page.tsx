@@ -34,7 +34,7 @@ export default function Home() {
           </TabsList>
 
           {/* Search Input */}
-          <div className="relative max-w-md">
+          <div className="relative max-w-xs">
             <Input
               type="text"
               placeholder="Enter event code"
@@ -42,7 +42,7 @@ export default function Home() {
             />
             <SendHorizontal
               size={25}
-              className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-secondary/85"
+              className="absolute right-4 top-1/2 z-10 -translate-y-1/2 cursor-pointer text-secondary/85"
             />
           </div>
 
