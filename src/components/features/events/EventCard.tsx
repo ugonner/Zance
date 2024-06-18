@@ -22,14 +22,18 @@ const EventCard = ({ event }: { event: any }) => {
         />
       </figure>
 
-      <section className="flex items-start py-4">
+      <section className="flex items-start py-2">
         <div className="flex flex-[4] flex-col justify-center gap-0.5 text-base">
           <h2 className="text-lg font-medium">{event.title}</h2>
-          <time className="text-primary">{event.time}</time>
-          <p className="text-sm text-gray-400">{event.type}</p>
+          <time className="text-primary">{event.date}</time>
+          <p className="text-sm text-gray-400">{event.location}</p>
         </div>
         <div className="flex flex-1 justify-end">
-          <Bookmark size={25} className="text-gray-800" />
+          <Bookmark
+            size={20}
+            // fill={false ? "red" : undefined}
+            className="text-gray-800"
+          />
         </div>
       </section>
     </Link>

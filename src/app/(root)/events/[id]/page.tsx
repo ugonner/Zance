@@ -1,3 +1,5 @@
+"use client";
+
 import Heading from "@/components/ui/common/Heading";
 import Description from "@/components/ui/common/Description";
 import GridContainer from "@/components/ui/containers/GridContainer";
@@ -8,15 +10,22 @@ import TagCard from "@/components/features/events/TagCard";
 import AvatarStack from "@/components/features/users/AvatarStack";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import EventCard from "@/components/features/events/EventCard";
+import { useParams } from "next/navigation";
+import EVENTS from "@/consts/Events";
 
 const EventDetailPage = () => {
+  const params = useParams();
+
+  const event = EVENTS.find((event) => event.id === +params.id);
+
   return (
     <GridContainer>
       <section className="col-span-full flex flex-col justify-center gap-4 md:gap-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-0">
           {/* Event name, time & location */}
           <div className="flex flex-col items-start gap-2 md:flex-1">
-            <Heading type="secondary">Leadership Conference</Heading>
+            <Heading type="secondary">{event?.title}</Heading>
 
             <div className="flex flex-col items-start gap-2">
               <time className="flex items-center justify-center gap-2">
@@ -26,7 +35,7 @@ const EventDetailPage = () => {
                   size={25}
                 />
                 <Description className="text-primary">
-                  Tue, 20th April 2024
+                  {event?.date}
                 </Description>
               </time>
 
@@ -36,7 +45,7 @@ const EventDetailPage = () => {
                   fill="#B7B7BB"
                   size={25}
                 />
-                <Description>12pm - 3pm</Description>
+                <Description>{event?.time}</Description>
               </time>
 
               <span className="flex items-center justify-center gap-2">
@@ -45,7 +54,7 @@ const EventDetailPage = () => {
                   fill="#B7B7BB"
                   size={25}
                 />
-                <Description>Online event (Zoom)</Description>
+                <Description>{event?.location}</Description>
               </span>
             </div>
           </div>
@@ -53,10 +62,10 @@ const EventDetailPage = () => {
           {/* Event Image */}
           <div className="relative aspect-video flex-1 overflow-hidden rounded-sm md:flex-[.6]">
             <Image
-              src="/images/seminar.jpg"
+              src={event?.image ? event.image : ""}
               fill
               objectFit="cover"
-              alt="Seminar"
+              alt={`Image for event ${event?.title}`}
             />
           </div>
         </div>
@@ -67,20 +76,7 @@ const EventDetailPage = () => {
           <div className="flex flex-col gap-2">
             <Heading type="tertiary">Event Description</Heading>
             <Description className="text-justify">
-              Join us at the Global Leadership Conference 2024, an unparalleled
-              gathering of leaders, innovators, and change-makers from around
-              the world. This prestigious three-day event, held from July 10 to
-              July 12 at the luxurious Grand Hyatt Hotel in New York City,
-              promises to be a transformative experience designed to empower and
-              inspire current and future leaders. Hear from world-renowned
-              leaders and visionaries across various industries who will share
-              their insights on leadership, innovation, and strategic thinking.
-              Interactive Workshops: Participate in hands-on workshops that
-              cover essential leadership skills, including effective
-              communication, decision-making, and team building. Panel
-              Discussions: Engage with experts in panel discussions addressing
-              the most pressing leadership challenges and opportunities in
-              today&apos;s dynamic environment.
+              {event?.description}
             </Description>
           </div>
 
@@ -88,11 +84,7 @@ const EventDetailPage = () => {
             <Heading type="tertiary">Event Tags</Heading>
 
             <div className="flex flex-wrap items-center gap-2">
-              {["Technology", "AI", "Global market", "development", "idea"].map(
-                (tag) => (
-                  <TagCard key={tag} tag={tag} />
-                ),
-              )}
+              {event?.tags.map((tag) => <TagCard key={tag} tag={tag} />)}
             </div>
           </div>
         </div>
@@ -104,14 +96,15 @@ const EventDetailPage = () => {
             <Heading type="tertiary">Event Brochure</Heading>
             <Description className="flex items-center gap-2">
               <File className="cursor-pointer" size={20} />
-              <span>Q2 Board meeting Review</span>
+              <span>{event?.eventBrochure}</span>
             </Description>
           </div>
 
           <div className="flex flex-col gap-2">
             <Heading type="tertiary">Event Code</Heading>
             <Description className="flex items-center gap-2">
-              <span>XYZ-123</span> <Copy className="cursor-pointer" size={20} />
+              <span>{event?.id}</span>{" "}
+              <Copy className="cursor-pointer" size={20} />
             </Description>
           </div>
 
@@ -137,14 +130,27 @@ const EventDetailPage = () => {
                 ]}
               />
               <p className="text-sm text-gray-400 dark:text-gray-200">
-                500 Registered
+                {event?.attendees} Registered
               </p>
             </div>
           </div>
         </div>
 
-        <Button className="mt-4 max-w-72">Register for this event</Button>
+        <Button className="max-w-72">Register for this event</Button>
       </section>
+
+      <section className="col-span-full">
+        <Heading type="tertiary" className="mb-4">
+          Other events like this
+        </Heading>
+        <GridContainer>
+          {EVENTS.map((event) => (
+            <EventCard key={event?.title} event={event} />
+          ))}
+        </GridContainer>
+      </section>
+
+      {/* Event Recommendations */}
     </GridContainer>
   );
 };

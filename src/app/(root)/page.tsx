@@ -5,6 +5,10 @@ import Description from "@/components/ui/common/Description";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { SendHorizontal } from "lucide-react";
+import AllEvents from "@/components/features/events/AllEvents";
+import AttendingEvents from "@/components/features/events/AttendingEvents";
+import SavedEvents from "@/components/features/events/SavedEvents";
+import PastEvents from "@/components/features/events/PastEvents";
 
 export default function Home() {
   return (
@@ -37,7 +41,7 @@ export default function Home() {
               className="mb-8 mt-4 px-4"
             />
             <SendHorizontal
-              size={30}
+              size={25}
               className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-secondary/85"
             />
           </div>
@@ -45,10 +49,18 @@ export default function Home() {
           <TabsContent value="mine">
             <MyEvents />
           </TabsContent>
-          <TabsContent value="all">All Events</TabsContent>
-          <TabsContent value="attending">Attending</TabsContent>
-          <TabsContent value="saved">Saved</TabsContent>
-          <TabsContent value="past">Past</TabsContent>
+          <TabsContent value="all">
+            <AllEvents />
+          </TabsContent>
+          <TabsContent value="attending">
+            <AttendingEvents />
+          </TabsContent>
+          <TabsContent value="saved">
+            <SavedEvents />
+          </TabsContent>
+          <TabsContent value="past">
+            <PastEvents />
+          </TabsContent>
         </Tabs>
       </div>
     </section>

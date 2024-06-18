@@ -3,8 +3,7 @@
 import React, { useRef } from "react";
 import Container from "../containers/Container";
 import Logo from "./Logo";
-import { Input } from "../input";
-import { Bell, Search, SquarePlus } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { Separator } from "../separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import {
@@ -18,6 +17,9 @@ import {
 import ThemeToggler from "./ThemeToggler";
 import PROFILE_MENU from "@/consts/ProfileMenu";
 import Link from "next/link";
+
+import { Input } from "../input";
+import CreateEventDialog from "@/components/features/events/CreateEventDialog";
 
 const Navbar = () => {
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -51,13 +53,8 @@ const Navbar = () => {
 
         {/* Left */}
         <div className="flex h-10 items-center space-x-4">
-          <Link
-            href="#"
-            className="hidden items-center justify-center gap-2 md:flex"
-          >
-            <SquarePlus size={18} strokeWidth={2} className="text-primary" />
-            <span className="font-medium">Create Event</span>
-          </Link>
+          {/* Create Event */}
+          <CreateEventDialog />
 
           <Separator orientation="vertical" className="hidden md:inline" />
 

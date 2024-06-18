@@ -7,6 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 import {
@@ -70,9 +71,11 @@ const LoginDialog = ({
     >
       <DialogContent>
         <DialogHeader>
-          <Heading type="secondary" className="text-center">
-            Welcome back
-          </Heading>
+          <DialogTitle>
+            <Heading type="secondary" className="text-center">
+              Welcome back
+            </Heading>
+          </DialogTitle>
           <DialogDescription className="text-center">
             Please login into your account to continue
           </DialogDescription>

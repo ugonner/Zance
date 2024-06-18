@@ -25,6 +25,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 
 import { Button } from "../../ui/button";
@@ -148,12 +149,14 @@ const EmailRegistrationDialog = ({
           />
         )}
         <DialogHeader>
-          <Heading
-            type="secondary"
-            className={cn(isFirstStep ? "text-center" : "text-left")}
-          >
-            {isFirstStep ? "Welcome to Zance" : "Setup your account"}
-          </Heading>
+          <DialogTitle>
+            <Heading
+              type="secondary"
+              className={cn(isFirstStep ? "text-center" : "text-left")}
+            >
+              {isFirstStep ? "Welcome to Zance" : "Setup your account"}
+            </Heading>
+          </DialogTitle>
           <DialogDescription
             className={cn(isFirstStep ? "text-center" : "text-left")}
           >
