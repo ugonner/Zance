@@ -105,6 +105,19 @@ const EmailRegistrationDialog = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      passwordConfirm: "",
+      fullName: "",
+      terms: true,
+      professionalEmail: "",
+      phoneNumber: "",
+      professionalLink: "",
+      portfolioWebsite: "",
+      workPlace: "",
+      location: "",
+    },
   });
 
   const handleNextClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -149,13 +162,10 @@ const EmailRegistrationDialog = ({
           />
         )}
         <DialogHeader>
-          <DialogTitle>
-            <Heading
-              type="secondary"
-              className={cn(isFirstStep ? "text-center" : "text-left")}
-            >
-              {isFirstStep ? "Welcome to Zance" : "Setup your account"}
-            </Heading>
+          <DialogTitle
+            className={cn(isFirstStep ? "text-center" : "text-left")}
+          >
+            {isFirstStep ? "Welcome to Zance" : "Setup your account"}
           </DialogTitle>
           <DialogDescription
             className={cn(isFirstStep ? "text-center" : "text-left")}

@@ -25,9 +25,17 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../../ui/button";
-import Heading from "../../ui/common/Heading";
 import PasswordInput from "./PasswordInput";
-import { FormType } from "@/types";
+
+import { useToast } from "@/components/ui/use-toast";
+import { FormType, LoginFormData, LoginResponse } from "@/types";
+import useApi from "@/hooks/useApi";
+import Loader from "@/components/ui/common/Loader";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/authSlice";
+import { useRouter } from "next/navigation";
+import ROUTES from "@/consts/Routes";
+import { setCookie } from "@/lib/cookies";
 
 const LoginDialog = ({
   isOpen,
@@ -36,10 +44,18 @@ const LoginDialog = ({
   isOpen: boolean;
   setOpenForm: (formName: FormType) => void;
 }) => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { createData, loading: isSubmitting } = useApi<
+    LoginFormData,
+    LoginResponse
+  >();
+
   const formSchema = z.object({
     email: z
       .string()
-      .email({ message: "Please enter a valid email address" })
+      // .email({ message: "Please enter a valid email address" })
       .min(2, { message: "Email must be at least 2 characters long" })
       .max(50, { message: "Email must be at most 50 characters long" }),
     password: z
@@ -50,12 +66,42 @@ const LoginDialog = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Login Form Values", values);
-    setOpenForm(null);
-    form.reset();
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const loginCredentials = {
+        username: values.email,
+        password: values.password,
+      };
+      const res = await createData("auth/login", loginCredentials);
+
+      // @ts-ignore
+      setCookie("token", res?.token, { expires: "forever", path: "/" });
+
+      // @ts-ignore
+      dispatch(setUser(res));
+
+      toast({
+        // Todo: Change this after the real api works
+        // @ts-ignore
+        title: `Logged in successfully! Welcome back ${res?.username}!`,
+      });
+
+      router.push(ROUTES.HOME);
+
+      setOpenForm(null);
+      form.reset();
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: `${err}`,
+      });
+    }
   };
 
   // A handler that will be executed when a user clicks register with email in the bottom section of the form
@@ -71,11 +117,7 @@ const LoginDialog = ({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            <Heading type="secondary" className="text-center">
-              Welcome back
-            </Heading>
-          </DialogTitle>
+          <DialogTitle className="text-center">Welcome back</DialogTitle>
           <DialogDescription className="text-center">
             Please login into your account to continue
           </DialogDescription>
@@ -111,7 +153,16 @@ const LoginDialog = ({
                 />
               )}
             />
-            <Button type="submit">Login</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  Logging in
+                  <Loader />
+                </span>
+              ) : (
+                "Login"
+              )}
+            </Button>
           </form>
         </Form>
 

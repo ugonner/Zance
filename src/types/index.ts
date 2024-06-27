@@ -1,8 +1,31 @@
 export type FormType = "login" | "emailRegistration" | null;
 
+// User
+
+// Login Form
 export interface LoginFormData {
-  email: string;
+  // email: string;
+  username: string;
   password: string;
+}
+
+export interface LoginResponse {
+  status: string;
+  message: string;
+  data: {
+    user: {
+      profile: {
+        username: string;
+        fullname: string;
+        profilePhoto: string;
+        interests: string[];
+        joiningDate: string; // ISO 8601 date string
+      };
+      _id: string;
+      email: string;
+    };
+    token: string;
+  };
 }
 
 export interface EmailRegistrationFormData {

@@ -8,7 +8,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <section className="flex min-h-screen items-stretch justify-center">
+    <section
+      className="flex min-h-screen items-stretch justify-center"
+      suppressHydrationWarning
+    >
       <div className="relative hidden flex-1 items-center justify-center lg:flex">
         <Image
           src="/images/auth-img.png"
