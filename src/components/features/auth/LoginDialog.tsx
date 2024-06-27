@@ -86,6 +86,9 @@ const LoginDialog = ({
       // @ts-ignore
       dispatch(setUser(res));
 
+      setOpenForm(null);
+      form.reset();
+
       toast({
         // Todo: Change this after the real api works
         // @ts-ignore
@@ -93,9 +96,6 @@ const LoginDialog = ({
       });
 
       router.push(ROUTES.HOME);
-
-      setOpenForm(null);
-      form.reset();
     } catch (err) {
       toast({
         variant: "destructive",
