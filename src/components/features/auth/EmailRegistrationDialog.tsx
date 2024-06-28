@@ -29,7 +29,6 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "../../ui/button";
-import Heading from "../../ui/common/Heading";
 import PasswordInput from "./PasswordInput";
 import Link from "next/link";
 import CustomPhoneInput from "./CustomPhoneInput";
@@ -105,6 +104,7 @@ const EmailRegistrationDialog = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: "onChange",
     defaultValues: {
       email: "",
       password: "",
@@ -120,8 +120,7 @@ const EmailRegistrationDialog = ({
     },
   });
 
-  const handleNextClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleNextClick = async () => {
     const isStepValid = await form.trigger([
       "email",
       "password",
@@ -381,7 +380,11 @@ const EmailRegistrationDialog = ({
               </>
             )}
 
-            {isFirstStep && <Button onClick={handleNextClick}>Next</Button>}
+            {isFirstStep && (
+              <Button type="button" onClick={handleNextClick}>
+                Next
+              </Button>
+            )}
             {isSecondStep && <Button type="submit">Create Account</Button>}
           </form>
         </Form>
