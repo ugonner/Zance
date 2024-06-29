@@ -2,17 +2,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  image: string;
-  refreshToken: string;
-  token: string;
-}
+import { User } from "@/types";
 
 interface AuthState {
   user: User | null;

@@ -1,7 +1,8 @@
 import { useState, useCallback } from "react";
 
+const API_BASE_URL = "http://127.0.0.1:2500/api/v1";
 // const API_BASE_URL = "https://zance-api.azurewebsites.net/api/v1";
-const API_BASE_URL = "https://dummyjson.com";
+// const API_BASE_URL = "https://dummyjson.com";
 
 interface RequestOptions<T> {
   method: string;

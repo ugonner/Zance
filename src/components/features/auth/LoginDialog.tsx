@@ -55,7 +55,7 @@ const LoginDialog = ({
   const formSchema = z.object({
     email: z
       .string()
-      // .email({ message: "Please enter a valid email address" })
+      .email({ message: "Please enter a valid email address" })
       .min(2, { message: "Email must be at least 2 characters long" })
       .max(50, { message: "Email must be at most 50 characters long" }),
     password: z
@@ -75,16 +75,22 @@ const LoginDialog = ({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const loginCredentials = {
-        username: values.email,
+        email: values.email,
         password: values.password,
       };
       const res = await createData("auth/login", loginCredentials);
 
-      // @ts-ignore
-      setCookie("token", res?.token, { expires: "forever", path: "/" });
+      const token = res.data.token;
+
+      const userData = res.data.user;
+
+      console.log("USER DATA ", userData, res);
 
       // @ts-ignore
-      dispatch(setUser(res));
+      setCookie("token", token, { expires: "forever", path: "/" });
+
+      // @ts-ignore
+      dispatch(setUser(userData));
 
       setOpenForm(null);
       form.reset();

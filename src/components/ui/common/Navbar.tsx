@@ -82,9 +82,15 @@ const Navbar = () => {
   const loggedInUser = useSelector(getLoggedInUser);
 
   // Todo: Once the api is ready, make this compatible with fullname
-  const fullName = `${loggedInUser?.firstName} ${loggedInUser?.lastName}`;
 
-  const fallbackProfile = fullName.split(" ")[0][0] + fullName.split(" ")[1][0];
+  const email = loggedInUser?.email;
+
+  const { fullName, profilePhoto } = loggedInUser?.profile || {
+    fullName: "",
+    profilePhoto: "",
+  };
+
+  const fallbackProfile = "User";
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -138,7 +144,10 @@ const Navbar = () => {
               <MenubarTrigger className="cursor-pointer">
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={loggedInUser?.image || "https://github.com/shadcn.png"}
+                    src={
+                      loggedInUser?.profile?.profilePhoto ||
+                      "https://github.com/shadcn.png"
+                    }
                   />
                   <AvatarFallback>{fallbackProfile}</AvatarFallback>
                 </Avatar>
@@ -149,9 +158,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-2">
                     <Avatar className="h-12 w-12">
                       <AvatarImage
-                        src={
-                          loggedInUser?.image || "https://github.com/shadcn.png"
-                        }
+                        src={profilePhoto || "https://github.com/shadcn.png"}
                       />
                       <AvatarFallback>{fallbackProfile}</AvatarFallback>
                     </Avatar>
@@ -159,7 +166,7 @@ const Navbar = () => {
                     <div className="flex flex-col justify-center">
                       <p className="text-base font-semibold">{fullName}</p>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {loggedInUser?.email}
+                        {email}
                       </p>
                     </div>
                   </div>
