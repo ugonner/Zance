@@ -23,7 +23,7 @@ import { Input } from "../input";
 import CreateEventDialog from "@/components/features/events/CreateEventDialog";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getLoggedInUser, logout } from "@/store/authSlice";
+import { getLoggedInUser, logout } from "@/store/reducers/authSlice";
 import ROUTES from "@/consts/Routes";
 import { useRouter } from "next/navigation";
 import { deleteCookie } from "@/lib/cookies";

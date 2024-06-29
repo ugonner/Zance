@@ -1,7 +1,7 @@
 // store/authSlice.ts
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./store";
+import { RootState } from "../store";
 
 interface User {
   id: number;

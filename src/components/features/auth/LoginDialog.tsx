@@ -32,7 +32,7 @@ import { FormType, LoginFormData, LoginResponse } from "@/types";
 import useApi from "@/hooks/useApi";
 import Loader from "@/components/ui/common/Loader";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/store/authSlice";
+import { setUser } from "@/store/reducers/authSlice";
 import { useRouter } from "next/navigation";
 import ROUTES from "@/consts/Routes";
 import { setCookie } from "@/lib/cookies";
