@@ -40,6 +40,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "../button";
+import { DEFAULT_IMAGE_PLACEHOLDER } from "@/consts/Users";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -146,7 +147,7 @@ const Navbar = () => {
                   <AvatarImage
                     src={
                       loggedInUser?.profile?.profilePhoto ||
-                      "https://github.com/shadcn.png"
+                      DEFAULT_IMAGE_PLACEHOLDER
                     }
                   />
                   <AvatarFallback>{fallbackProfile}</AvatarFallback>
@@ -158,7 +159,7 @@ const Navbar = () => {
                   <div className="flex items-center gap-2">
                     <Avatar className="h-12 w-12">
                       <AvatarImage
-                        src={profilePhoto || "https://github.com/shadcn.png"}
+                        src={profilePhoto || DEFAULT_IMAGE_PLACEHOLDER}
                       />
                       <AvatarFallback>{fallbackProfile}</AvatarFallback>
                     </Avatar>
@@ -210,7 +211,7 @@ const Navbar = () => {
 
                 {logoutMenu && (
                   <AlertDialog>
-                    <AlertDialogTrigger>
+                    <AlertDialogTrigger asChild>
                       <Button
                         size="sm"
                         className="flex w-full items-center gap-2 text-sm text-gray-200"

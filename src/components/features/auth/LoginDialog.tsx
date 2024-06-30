@@ -74,7 +74,7 @@ const LoginDialog = ({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const loginCredentials = {
+      const loginCredentials: LoginFormData = {
         email: values.email,
         password: values.password,
       };
@@ -83,8 +83,6 @@ const LoginDialog = ({
       const token = res.data.token;
 
       const userData = res.data.user;
-
-      console.log("USER DATA ", userData, res);
 
       // @ts-ignore
       setCookie("token", token, { expires: "forever", path: "/" });
@@ -98,7 +96,7 @@ const LoginDialog = ({
       toast({
         // Todo: Change this after the real api works
         // @ts-ignore
-        title: `Logged in successfully! Welcome back ${res?.username}!`,
+        title: `Logged in successfully! Welcome back${res?.username || ""}!`,
       });
 
       router.push(ROUTES.HOME);
