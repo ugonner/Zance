@@ -82,8 +82,6 @@ const Navbar = () => {
 
   const loggedInUser = useSelector(getLoggedInUser);
 
-  // Todo: Once the api is ready, make this compatible with fullname
-
   const email = loggedInUser?.email;
 
   const { fullName, profilePhoto } = loggedInUser?.profile || {

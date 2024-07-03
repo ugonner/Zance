@@ -31,14 +31,22 @@ export interface LoginResponse {
 export interface EmailRegistrationResponse {
   status: string;
   message: string;
-  data: {
-    user: User;
-    token: string;
-  };
+  user: User;
 }
 
 export interface EmailRegistrationFormData {
   email: string;
   password: string;
   passwordConfirm?: string;
+}
+
+export interface ProfileFormData {
+  fullName: string;
+  phoneNumber: string;
+  professionalTitle: string;
+  linkedInLink: string;
+  workPlace?: string;
+  location: string;
+  bio?: string;
+  interests: string[];
 }
