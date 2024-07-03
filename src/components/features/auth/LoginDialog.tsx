@@ -94,9 +94,7 @@ const LoginDialog = ({
       form.reset();
 
       toast({
-        // Todo: Change this after the real api works
-        // @ts-ignore
-        title: `Logged in successfully! Welcome back${res?.username || ""}!`,
+        title: res.message,
       });
 
       router.push(ROUTES.HOME);

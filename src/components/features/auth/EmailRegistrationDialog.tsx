@@ -7,6 +7,8 @@ import {
   EmailRegistrationResponse,
   FormType,
   ProfileFormData,
+  ProfileUpdateResponse,
+  profileData,
 } from "@/types";
 
 import {
@@ -43,6 +45,11 @@ const EmailRegistrationDialog = ({
     EmailRegistrationResponse
   >();
 
+  const { updateData, loading: isCreatingProfile } = useApi<
+    profileData,
+    ProfileUpdateResponse
+  >();
+
   // A state that will track the form steps - for multi step form.
   const [step, setStep] = useState<1 | 2>(1);
 
@@ -71,7 +78,7 @@ const EmailRegistrationDialog = ({
       dispatch(setUser(response?.user));
 
       toast({
-        title: `Registration Successful! Now Please take a time to setup your profile!`,
+        title: `${response.message}! Now Please take a time to setup your profile!`,
       });
 
       setStep(2);
@@ -84,10 +91,44 @@ const EmailRegistrationDialog = ({
   };
 
   const onProfileSubmit = async (values: ProfileFormData) => {
-    console.log("PROFILE VALUES ", values);
+    try {
+      const profileDataPayload = {
+        profile: {
+          fullname: values.fullName,
+          professionalTitle: values.professionalTitle,
+          workPlace: values.workPlace,
+          location: values.location,
+          bio: values.bio,
+          interests: values.interests,
+          socialLinks: {
+            linkedIn: values.linkedInLink,
+          },
+          contactDetails: {
+            phone: values.phoneNumber,
+          },
+        },
+      };
 
-    setOpenForm(null);
-    setStep(1);
+      const response = await updateData("user/profile", profileDataPayload);
+
+      const userData = response?.data;
+
+      console.log("RESPONSE USER ", response?.data);
+
+      dispatch(setUser(userData));
+
+      toast({
+        title: `Profile Created Successfully! You can now login to your account!`,
+      });
+
+      setOpenForm(null);
+      setStep(1);
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: `${err}`,
+      });
+    }
   };
 
   return (
@@ -119,7 +160,10 @@ const EmailRegistrationDialog = ({
             onSuccess={onRegistrationSubmit}
           />
         ) : (
-          <ProfileForm onSuccess={onProfileSubmit} />
+          <ProfileForm
+            isCreatingProfile={isCreatingProfile}
+            onSuccess={onProfileSubmit}
+          />
         )}
 
         {isFirstStep && (

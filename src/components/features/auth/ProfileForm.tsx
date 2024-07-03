@@ -53,8 +53,10 @@ const profileFormSchema = z.object({
 });
 
 const ProfileForm = ({
+  isCreatingProfile = false,
   onSuccess,
 }: {
+  isCreatingProfile: boolean;
   onSuccess: (values: z.infer<typeof profileFormSchema>) => void;
 }) => {
   const form = useForm<z.infer<typeof profileFormSchema>>({
@@ -228,15 +230,14 @@ const ProfileForm = ({
         />
 
         <Button type="submit">
-          {/* {isRegistering ? (
+          {isCreatingProfile ? (
             <span className="flex items-center gap-2">
               Creating
               <Loader />
             </span>
           ) : (
             "Create"
-          )} */}
-          Create
+          )}
         </Button>
       </form>
     </Form>

@@ -2,20 +2,28 @@ export type FormType = "login" | "emailRegistration" | null;
 
 // User
 export interface User {
-  _id: number;
-  email: string;
   profile: {
-    fullName: string;
+    socialLinks: {
+      linkedIn: string;
+    };
+    contactDetails: {
+      phone: string;
+    };
     profilePhoto: string;
+    fullname: string;
+    professionalTitle: string;
+    location: string;
+    bio: string;
     interests: string[];
-    joiningDate: Date;
+    joiningDate: string;
   };
+  _id: string;
+  email: string;
 }
 
 // Login Form
 export interface LoginFormData {
   email: string;
-  // username: string;
   password: string;
 }
 
@@ -40,6 +48,23 @@ export interface EmailRegistrationFormData {
   passwordConfirm?: string;
 }
 
+export interface profileData {
+  profile: {
+    fullname: string;
+    professionalTitle: string;
+    workPlace?: string;
+    location: string;
+    bio?: string;
+    interests: string[] | [];
+    socialLinks: {
+      linkedIn: string;
+    };
+    contactDetails: {
+      phone: string;
+    };
+  };
+}
+
 export interface ProfileFormData {
   fullName: string;
   phoneNumber: string;
@@ -49,4 +74,10 @@ export interface ProfileFormData {
   location: string;
   bio?: string;
   interests: string[];
+}
+
+export interface ProfileUpdateResponse {
+  status: string;
+  message: string;
+  data: User;
 }
