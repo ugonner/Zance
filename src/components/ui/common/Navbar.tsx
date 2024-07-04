@@ -3,7 +3,7 @@
 import React, { SyntheticEvent, useRef } from "react";
 import Container from "../containers/Container";
 import Logo from "./Logo";
-import { Bell, Search } from "lucide-react";
+import { Bell, Linkedin, Search } from "lucide-react";
 import { Separator } from "../separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import {
@@ -41,6 +41,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "../button";
 import { DEFAULT_IMAGE_PLACEHOLDER } from "@/consts/Users";
+
+import { Label } from "@/components/ui/label";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import Heading from "./Heading";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -82,11 +95,30 @@ const Navbar = () => {
 
   const loggedInUser = useSelector(getLoggedInUser);
 
+  console.log("LOGGED IN USER ", loggedInUser);
+
   const email = loggedInUser?.email;
 
-  const { fullName, profilePhoto } = loggedInUser?.profile || {
-    fullName: "",
+  const {
+    fullname,
+    profilePhoto,
+    contactDetails,
+    socialLinks,
+    professionalTitle,
+    bio,
+    location,
+    joiningDate,
+    interests,
+  } = loggedInUser?.profile || {
+    fullname: "",
     profilePhoto: "",
+    contactDetails: "",
+    socialLinks: "",
+    professionalTitle: "",
+    bio: "",
+    location: "",
+    joiningDate: "",
+    interests: "",
   };
 
   const fallbackProfile = "User";
@@ -153,22 +185,102 @@ const Navbar = () => {
               </MenubarTrigger>
 
               <MenubarContent className="p-2 font-medium">
-                <MenubarItem>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage
-                        src={profilePhoto || DEFAULT_IMAGE_PLACEHOLDER}
-                      />
-                      <AvatarFallback>{fallbackProfile}</AvatarFallback>
-                    </Avatar>
+                <MenubarItem asChild>
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <div className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-gray-100 hover:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:hover:bg-gray-800 dark:hover:text-gray-50">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage
+                            src={profilePhoto || DEFAULT_IMAGE_PLACEHOLDER}
+                          />
+                          <AvatarFallback>{fallbackProfile}</AvatarFallback>
+                        </Avatar>
 
-                    <div className="flex flex-col justify-center">
-                      <p className="text-base font-semibold">{fullName}</p>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {email}
-                      </p>
-                    </div>
-                  </div>
+                        <div className="flex flex-col justify-center">
+                          <p className="text-base font-semibold">{fullname}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {email}
+                          </p>
+                        </div>
+                      </div>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle>
+                          <Heading type="tertiary">Profile</Heading>
+                        </SheetTitle>
+                      </SheetHeader>
+                      <Separator className="my-4" />
+                      <section>
+                        <div className="flex flex-col justify-center gap-2">
+                          <h2 className="text-lg font-semibold">
+                            Basic Information
+                          </h2>
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-10 w-10">
+                                <AvatarImage
+                                  src={
+                                    profilePhoto || DEFAULT_IMAGE_PLACEHOLDER
+                                  }
+                                />
+                                <AvatarFallback>
+                                  {fallbackProfile}
+                                </AvatarFallback>
+                              </Avatar>
+
+                              <div className="flex flex-col justify-center">
+                                <p className="text-sm font-semibold">
+                                  {fullname}
+                                </p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {email}
+                                </p>
+                              </div>
+                            </div>
+
+                            <Separator
+                              className="py-4"
+                              orientation="vertical"
+                            />
+
+                            {/* Workplace */}
+                            <div className="flex flex-col justify-center">
+                              <h2 className="text-sm font-semibold">
+                                {professionalTitle}
+                              </h2>
+                              <h3 className="text-sm text-gray-600 dark:text-gray-400">
+                                Sessami
+                              </h3>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Separator className="my-4" />
+
+                        {/* Bio */}
+                        <div className="flex flex-col justify-center gap-2">
+                          <h2 className="text-lg font-semibold">Bio</h2>
+                          <p className="text-sm">{bio}</p>
+                        </div>
+
+                        <Separator className="my-4" />
+
+                        {/* Socials */}
+                        <div className="flex flex-col justify-center gap-2">
+                          <h2 className="text-lg font-semibold">Socials</h2>
+                          <Link
+                            target="_blank"
+                            href={socialLinks.linkedIn}
+                            className="flex items-center gap-2"
+                          >
+                            <Linkedin size={18} className="text-primary" />
+                            <p className="text-sm font-medium">{fullname}</p>
+                          </Link>
+                        </div>
+                      </section>
+                    </SheetContent>
+                  </Sheet>
                 </MenubarItem>
 
                 {PROFILE_MENU.map((menu, index) => {
