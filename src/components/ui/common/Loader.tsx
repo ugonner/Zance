@@ -1,8 +1,8 @@
-import { Loader2 } from "lucide-react";
-import React from "react";
+import { Loader2 } from 'lucide-react'
+import React from 'react'
 
 const Loader = () => {
-  return <Loader2 className="animate-spin" size={18} />;
-};
+  return <Loader2 className='animate-spin' size={18} />
+}
 
-export default Loader;
+export default Loader

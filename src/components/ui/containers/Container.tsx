@@ -1,16 +1,14 @@
-import { cn } from "@/lib/utils";
-import React from "react";
+import { cn } from '@/lib/utils'
+import React from 'react'
 
 const Container = ({
-  className = "",
+  className = '',
   children,
 }: {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }) => {
-  return (
-    <div className={cn("container", "mx-auto p-4", className)}>{children}</div>
-  );
-};
+  return <div className={cn('container', 'mx-auto p-4', className)}>{children}</div>
+}
 
-export default Container;
+export default Container

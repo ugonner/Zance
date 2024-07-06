@@ -1,50 +1,49 @@
 // store/authSlice.ts
+import { User } from '@/types'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../store";
-import { User } from "@/types";
+import { RootState } from '../store'
 
 interface AuthState {
-  user: User | null;
-  token: string | null;
-  isAuthenticated: boolean;
+  user: User | null
+  token: string | null
+  isAuthenticated: boolean
 }
 
 interface UserPayload {
-  user: User;
-  token: string;
+  user: User
+  token: string
 }
 
 const initialState: AuthState = {
   user: null,
   token: null,
   isAuthenticated: true,
-};
+}
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     setUser(state, action: PayloadAction<UserPayload>) {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
+      state.user = action.payload.user
+      state.token = action.payload.token
+      state.isAuthenticated = true
     },
     logout(state) {
-      state.user = null;
-      state.isAuthenticated = false;
+      state.user = null
+      state.isAuthenticated = false
     },
   },
-});
+})
 
-export const { setUser, logout } = authSlice.actions;
+export const { setUser, logout } = authSlice.actions
 
-export default authSlice.reducer;
+export default authSlice.reducer
 
 // A good practice to export these functions here for useSelector
-export const getIsAuthenticated = (state: RootState) =>
-  state.auth.isAuthenticated;
+export const getIsAuthenticated = (state: RootState) => state.auth.isAuthenticated
 
-export const getLoggedInUser = (state: RootState) => state.auth.user;
+export const getLoggedInUser = (state: RootState) => state.auth.user
 
-export const getToken = (state: RootState) => state.auth.token;
+export const getToken = (state: RootState) => state.auth.token

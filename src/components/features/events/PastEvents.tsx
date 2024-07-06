@@ -1,22 +1,23 @@
-"use client";
+'use client'
 
-import GridContainer from "@/components/ui/containers/GridContainer";
-import React, { useEffect } from "react";
-import EventCard from "./EventCard";
-import EVENTS from "@/consts/Events";
+import GridContainer from '@/components/ui/containers/GridContainer'
+import EVENTS from '@/consts/Events'
+import React, { useEffect } from 'react'
+
+import EventCard from './EventCard'
 
 const PastEvents = () => {
   useEffect(() => {
-    console.log("PAST EVENTS COMPONENT MOUNTED");
-  }, []);
+    console.log('PAST EVENTS COMPONENT MOUNTED')
+  }, [])
 
   return (
     <GridContainer>
-      {EVENTS.map((event) => (
+      {EVENTS.map(event => (
         <EventCard key={event?.title} event={event} />
       ))}
     </GridContainer>
-  );
-};
+  )
+}
 
-export default PastEvents;
+export default PastEvents

@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const loggedInUser = request.cookies.get("token");
+  const loggedInUser = request.cookies.get('token')
   if (!loggedInUser) {
-    return NextResponse.redirect(new URL("/auth", request.url));
+    return NextResponse.redirect(new URL('/auth', request.url))
   }
 }
 
 export const config = {
-  matcher: ["/", "/events/:path*"],
-};
+  matcher: ['/', '/events/:path*'],
+}

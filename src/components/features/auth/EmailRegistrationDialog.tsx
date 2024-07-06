@@ -1,15 +1,4 @@
-"use client";
-
-import React, { useState } from "react";
-
-import {
-  EmailRegistrationFormData,
-  EmailRegistrationResponse,
-  FormType,
-  ProfileFormData,
-  ProfileUpdateResponse,
-  profileData,
-} from "@/types";
+'use client'
 
 import {
   Dialog,
@@ -18,77 +7,83 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
+import { useToast } from '@/components/ui/use-toast'
+import useApi from '@/hooks/useApi'
+import { cn } from '@/lib/utils'
+import { getLoggedInUser, setUser } from '@/store/reducers/authSlice'
+import {
+  EmailRegistrationFormData,
+  EmailRegistrationResponse,
+  FormType,
+  ProfileFormData,
+  ProfileResponse,
+  profileData,
+} from '@/types'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { Button } from "../../ui/button";
-import useApi from "@/hooks/useApi";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import EmailRegistrationForm from "./EmailRegistrationForm";
-import ProfileForm from "./ProfileForm";
-import { useDispatch, useSelector } from "react-redux";
-import { getLoggedInUser, setUser } from "@/store/reducers/authSlice";
+import { Button } from '../../ui/button'
+import EmailRegistrationForm from './EmailRegistrationForm'
+import ProfileForm from './ProfileForm'
 
 const EmailRegistrationDialog = ({
   isOpen,
   setOpenForm,
 }: {
-  isOpen: boolean;
-  setOpenForm: (formName: FormType) => void;
+  isOpen: boolean
+  setOpenForm: (formName: FormType) => void
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   const { createData, loading: isRegistering } = useApi<
     EmailRegistrationFormData,
     EmailRegistrationResponse
-  >();
+  >()
 
-  const { updateData, loading: isCreatingProfile } = useApi<
-    profileData,
-    ProfileUpdateResponse
-  >();
+  const { updateData, loading: isCreatingProfile } = useApi<profileData, ProfileResponse>()
 
   // A state that will track the form steps - for multi step form.
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2>(1)
 
   // Helpful derived states for reusability
-  const isFirstStep = step === 1;
+  const isFirstStep = step === 1
 
-  const loggedInUser = useSelector(getLoggedInUser);
-  console.log("LOGGED IN USER ", loggedInUser);
+  const loggedInUser = useSelector(getLoggedInUser)
+  console.log('LOGGED IN USER ', loggedInUser)
 
   // A handler that will be executed when a user clicks login with email in the bottom section of the form
   const handleOpenLoginForm = () => {
     // registrationForm.reset();
-    setOpenForm("login");
-  };
+    setOpenForm('login')
+  }
 
   const onRegistrationSubmit = async (values: EmailRegistrationFormData) => {
     try {
       const registrationData: EmailRegistrationFormData = {
         email: values.email,
         password: values.password,
-      };
-      const response = await createData("auth/register", registrationData);
+      }
+      const response = await createData('auth/register', registrationData)
 
-      console.log("RESPONSE USER ", response?.user);
+      console.log('RESPONSE USER ', response?.user)
 
-      dispatch(setUser(response?.user));
+      dispatch(setUser({ user: response?.user, token: '' }))
 
       toast({
         title: `${response.message}! Now Please take a time to setup your profile!`,
-      });
+      })
 
-      setStep(2);
+      setStep(2)
     } catch (err) {
       toast({
-        variant: "destructive",
+        variant: 'destructive',
         title: `${err}`,
-      });
+      })
     }
-  };
+  }
 
   const onProfileSubmit = async (values: ProfileFormData) => {
     try {
@@ -107,84 +102,63 @@ const EmailRegistrationDialog = ({
             phone: values.phoneNumber,
           },
         },
-      };
+      }
 
-      const response = await updateData("user/profile", profileDataPayload);
+      const response = await updateData('user/profile', profileDataPayload)
 
-      const userData = response?.data;
+      const userData = response?.data
 
-      console.log("RESPONSE USER ", response?.data);
-
-      dispatch(setUser(userData));
+      // Unsolved mystery until api works
+      // dispatch(setUser({ user: userData, token: '' }));
 
       toast({
         title: `Profile Created Successfully! You can now login to your account!`,
-      });
+      })
 
-      setOpenForm(null);
-      setStep(1);
+      setOpenForm(null)
+      setStep(1)
     } catch (err) {
       toast({
-        variant: "destructive",
+        variant: 'destructive',
         title: `${err}`,
-      });
+      })
     }
-  };
+  }
 
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) =>
-        open ? setOpenForm("emailRegistration") : setOpenForm(null)
-      }
-    >
+      onOpenChange={open => (open ? setOpenForm('emailRegistration') : setOpenForm(null))}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle
-            className={cn(isFirstStep ? "text-center" : "text-left")}
-          >
-            {isFirstStep ? "Welcome to Zance" : "Setup your account"}
+          <DialogTitle className={cn(isFirstStep ? 'text-center' : 'text-left')}>
+            {isFirstStep ? 'Welcome to Zance' : 'Setup your account'}
           </DialogTitle>
-          <DialogDescription
-            className={cn(isFirstStep ? "text-center" : "text-left")}
-          >
-            {isFirstStep
-              ? "Home to the brave"
-              : "Please fill in your correct details"}
+          <DialogDescription className={cn(isFirstStep ? 'text-center' : 'text-left')}>
+            {isFirstStep ? 'Home to the brave' : 'Please fill in your correct details'}
           </DialogDescription>
         </DialogHeader>
 
         {isFirstStep ? (
-          <EmailRegistrationForm
-            isRegistering={isRegistering}
-            onSuccess={onRegistrationSubmit}
-          />
+          <EmailRegistrationForm isRegistering={isRegistering} onSuccess={onRegistrationSubmit} />
         ) : (
-          <ProfileForm
-            isCreatingProfile={isCreatingProfile}
-            onSuccess={onProfileSubmit}
-          />
+          <ProfileForm isCreatingProfile={isCreatingProfile} onSuccess={onProfileSubmit} />
         )}
 
         {isFirstStep && (
-          <DialogFooter className="!flex-col !items-center !justify-center">
-            <DialogDescription className="text-center">
+          <DialogFooter className='!flex-col !items-center !justify-center'>
+            <DialogDescription className='text-center'>
               Don&apos;t have an account?
             </DialogDescription>
 
-            <Button
-              variant="link"
-              className="text-sm"
-              size="sm"
-              onClick={handleOpenLoginForm}
-            >
+            <Button variant='link' className='text-sm' size='sm' onClick={handleOpenLoginForm}>
               Login with Email
             </Button>
           </DialogFooter>
         )}
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
 
-export default EmailRegistrationDialog;
+export default EmailRegistrationDialog

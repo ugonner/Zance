@@ -1,1 +1,17 @@
-export const DEFAULT_IMAGE_PLACEHOLDER = "https://github.com/shadcn.png";
+export const DEFAULT_USER = {
+  profile: {
+    socialLinks: {
+      linkedIn: '',
+    },
+    contactDetails: {
+      phone: '',
+    },
+    profilePhoto: '',
+    fullname: 'Unknown User',
+    professionalTitle: '',
+    location: '',
+    bio: '',
+    interests: [],
+    joiningDate: `${new Date()}`,
+  },
+}

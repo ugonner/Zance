@@ -1,6 +1,6 @@
 const ROUTES = {
-  HOME: "/",
-  AUTH: "/auth",
-};
+  HOME: '/',
+  AUTH: '/auth',
+}
 
-export default ROUTES;
+export default ROUTES
