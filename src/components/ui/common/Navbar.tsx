@@ -1,9 +1,9 @@
 "use client";
 
-import React, { SyntheticEvent, useRef } from "react";
+import React from "react";
 import Container from "../containers/Container";
 import Logo from "./Logo";
-import { Bell, Linkedin, Search } from "lucide-react";
+import { Bell, Search } from "lucide-react";
 import { Separator } from "../separator";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import {
@@ -33,7 +33,6 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -42,27 +41,13 @@ import {
 import { Button } from "../button";
 import { DEFAULT_IMAGE_PLACEHOLDER } from "@/consts/Users";
 
-import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import Heading from "./Heading";
+import ProfileSheet from "@/components/features/users/ProfileSheet";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const PROFILE_MENU = [
-    {
-      title: "Separator",
-    },
     {
       title: "Profile",
       icon: React.createElement(CircleUser),
@@ -99,41 +84,22 @@ const Navbar = () => {
 
   const email = loggedInUser?.email;
 
-  const {
-    fullname,
-    profilePhoto,
-    contactDetails,
-    socialLinks,
-    professionalTitle,
-    bio,
-    location,
-    joiningDate,
-    interests,
-  } = loggedInUser?.profile || {
-    fullname: "",
+  const { fullname, profilePhoto } = loggedInUser?.profile || {
     profilePhoto: "",
-    contactDetails: "",
-    socialLinks: "",
-    professionalTitle: "",
-    bio: "",
-    location: "",
-    joiningDate: "",
-    interests: "",
+    fullname: "",
   };
 
   const fallbackProfile = "User";
-
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Since we are handling logout differently. We need some custom dialogs only in logout click
   const logoutMenu = PROFILE_MENU.find(
     (menu) => menu.title.toLowerCase() === "sign out",
   );
 
-  const handleSearchIconClick = () => {
-    if (!searchInputRef.current) return;
-    searchInputRef.current.focus();
-  };
+  // Also we need a sheet trigger while a user clicks profile
+  const profileSheetTrigger = PROFILE_MENU.find(
+    (menu) => menu.title.toLowerCase() === "profile",
+  );
 
   return (
     <nav className="fixed z-40 w-full border-b bg-background px-4 py-0.5">
@@ -147,10 +113,8 @@ const Navbar = () => {
             className="absolute left-4 cursor-pointer"
             size={20}
             strokeWidth={2.75}
-            onClick={handleSearchIconClick}
           />
           <Input
-            ref={searchInputRef}
             type="text"
             className="rounded-2xl pl-12"
             placeholder="Search Events"
@@ -186,8 +150,8 @@ const Navbar = () => {
 
               <MenubarContent className="p-2 font-medium">
                 <MenubarItem asChild>
-                  <Sheet>
-                    <SheetTrigger asChild>
+                  <ProfileSheet
+                    trigger={
                       <div className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-gray-100 hover:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:hover:bg-gray-800 dark:hover:text-gray-50">
                         <Avatar className="h-12 w-12">
                           <AvatarImage
@@ -203,87 +167,37 @@ const Navbar = () => {
                           </p>
                         </div>
                       </div>
-                    </SheetTrigger>
-                    <SheetContent>
-                      <SheetHeader>
-                        <SheetTitle>
-                          <Heading type="tertiary">Profile</Heading>
-                        </SheetTitle>
-                      </SheetHeader>
-                      <Separator className="my-4" />
-                      <section>
-                        <div className="flex flex-col justify-center gap-2">
-                          <h2 className="text-lg font-semibold">
-                            Basic Information
-                          </h2>
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <Avatar className="h-10 w-10">
-                                <AvatarImage
-                                  src={
-                                    profilePhoto || DEFAULT_IMAGE_PLACEHOLDER
-                                  }
-                                />
-                                <AvatarFallback>
-                                  {fallbackProfile}
-                                </AvatarFallback>
-                              </Avatar>
-
-                              <div className="flex flex-col justify-center">
-                                <p className="text-sm font-semibold">
-                                  {fullname}
-                                </p>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                  {email}
-                                </p>
-                              </div>
-                            </div>
-
-                            <Separator
-                              className="py-4"
-                              orientation="vertical"
-                            />
-
-                            {/* Workplace */}
-                            <div className="flex flex-col justify-center">
-                              <h2 className="text-sm font-semibold">
-                                {professionalTitle}
-                              </h2>
-                              <h3 className="text-sm text-gray-600 dark:text-gray-400">
-                                Sessami
-                              </h3>
-                            </div>
-                          </div>
-                        </div>
-
-                        <Separator className="my-4" />
-
-                        {/* Bio */}
-                        <div className="flex flex-col justify-center gap-2">
-                          <h2 className="text-lg font-semibold">Bio</h2>
-                          <p className="text-sm">{bio}</p>
-                        </div>
-
-                        <Separator className="my-4" />
-
-                        {/* Socials */}
-                        <div className="flex flex-col justify-center gap-2">
-                          <h2 className="text-lg font-semibold">Socials</h2>
-                          <Link
-                            target="_blank"
-                            href={socialLinks.linkedIn}
-                            className="flex items-center gap-2"
-                          >
-                            <Linkedin size={18} className="text-primary" />
-                            <p className="text-sm font-medium">{fullname}</p>
-                          </Link>
-                        </div>
-                      </section>
-                    </SheetContent>
-                  </Sheet>
+                    }
+                  />
                 </MenubarItem>
 
+                <MenubarSeparator />
+
+                {profileSheetTrigger && (
+                  <MenubarItem asChild>
+                    <ProfileSheet
+                      trigger={
+                        <div className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-gray-100 hover:text-gray-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:hover:bg-gray-800 dark:hover:text-gray-50">
+                          {profileSheetTrigger.icon &&
+                            React.cloneElement(profileSheetTrigger.icon, {
+                              className: "text-slate-700 dark:text-slate-200",
+                              size: 20,
+                            })}
+                          {profileSheetTrigger.title}
+                        </div>
+                      }
+                    />
+                  </MenubarItem>
+                )}
+
                 {PROFILE_MENU.map((menu, index) => {
+                  // Since we are handling logout and profile link differently
+                  if (
+                    menu.title.toLowerCase() === "sign out" ||
+                    menu.title.toLocaleLowerCase() === "profile"
+                  )
+                    return null;
+
                   if (menu.title.toLowerCase() === "separator")
                     return (
                       <MenubarSeparator
@@ -299,23 +213,20 @@ const Navbar = () => {
                       />
                     );
 
-                  // Since we are handling logout differently
-                  if (menu.title.toLowerCase() === "sign out") return null;
-
                   return (
-                    <Link
-                      key={`${menu.title} of index ${index}`}
-                      href={menu.path ? menu.path : "#"}
-                    >
-                      <MenubarItem className="flex items-center gap-2">
+                    <MenubarItem key={`${menu.title} of index ${index}`}>
+                      <Link
+                        href={menu.path ? menu.path : "#"}
+                        className="flex items-center gap-2"
+                      >
                         {menu.icon &&
                           React.cloneElement(menu.icon, {
                             className: "text-slate-700 dark:text-slate-200",
                             size: 20,
                           })}
                         {menu.title}
-                      </MenubarItem>
-                    </Link>
+                      </Link>
+                    </MenubarItem>
                   );
                 })}
 

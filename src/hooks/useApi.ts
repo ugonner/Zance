@@ -7,6 +7,7 @@ const API_BASE_URL = "http://127.0.0.1:2500/api/v1";
 interface RequestOptions<T> {
   method: string;
   body?: T;
+  token?: string;
 }
 
 const useApi = <RequestBody, ResponseBody>() => {
@@ -19,14 +20,20 @@ const useApi = <RequestBody, ResponseBody>() => {
       setLoading(true);
       setError(null);
 
-      const { method, body } = options || {};
+      const { method, body, token } = options || {};
 
       try {
+        const headers: HeadersInit = {
+          "Content-Type": "application/json",
+        };
+
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
           method: method || "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers,
           body: body ? JSON.stringify(body) : undefined,
         });
 
@@ -49,29 +56,29 @@ const useApi = <RequestBody, ResponseBody>() => {
   );
 
   const fetchData = useCallback(
-    (endpoint: string) => {
-      return request(endpoint);
+    (endpoint: string, token?: string) => {
+      return request(endpoint, { token });
     },
     [request],
   );
 
   const createData = useCallback(
-    (endpoint: string, body: RequestBody) => {
-      return request(endpoint, { method: "POST", body });
+    (endpoint: string, body: RequestBody, token?: string) => {
+      return request(endpoint, { method: "POST", body, token });
     },
     [request],
   );
 
   const updateData = useCallback(
-    (endpoint: string, body: RequestBody) => {
-      return request(endpoint, { method: "PUT", body });
+    (endpoint: string, body: RequestBody, token?: string) => {
+      return request(endpoint, { method: "PUT", body, token });
     },
     [request],
   );
 
   const deleteData = useCallback(
-    (endpoint: string) => {
-      return request(endpoint, { method: "DELETE" });
+    (endpoint: string, token?: string) => {
+      return request(endpoint, { method: "DELETE", token });
     },
     [request],
   );
