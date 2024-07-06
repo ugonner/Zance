@@ -76,8 +76,10 @@ export interface ProfileFormData {
   interests: string[];
 }
 
-export interface ProfileUpdateResponse {
+export interface ProfileResponse {
   status: string;
   message: string;
-  data: User;
+  data: {
+    user: User;
+  };
 }

@@ -5,7 +5,7 @@ const API_BASE_URL = "http://127.0.0.1:2500/api/v1";
 // const API_BASE_URL = "https://dummyjson.com";
 
 interface RequestOptions<T> {
-  method: string;
+  method?: string;
   body?: T;
   token?: string;
 }
@@ -17,6 +17,7 @@ const useApi = <RequestBody, ResponseBody>() => {
 
   const request = useCallback(
     async (endpoint: string, options?: RequestOptions<RequestBody>) => {
+      // To make sure everything will start from the same page
       setLoading(true);
       setError(null);
 

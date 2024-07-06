@@ -80,8 +80,6 @@ const Navbar = () => {
 
   const loggedInUser = useSelector(getLoggedInUser);
 
-  console.log("LOGGED IN USER ", loggedInUser);
-
   const email = loggedInUser?.email;
 
   const { fullname, profilePhoto } = loggedInUser?.profile || {
@@ -89,7 +87,8 @@ const Navbar = () => {
     fullname: "",
   };
 
-  const fallbackProfile = "User";
+  const fallbackProfile =
+    `${fullname?.split(" ")[0][0] + fullname?.split(" ")[1][0]}` || "U";
 
   // Since we are handling logout differently. We need some custom dialogs only in logout click
   const logoutMenu = PROFILE_MENU.find(

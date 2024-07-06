@@ -88,7 +88,7 @@ const LoginDialog = ({
       setCookie("token", token, { expires: "forever", path: "/" });
 
       // @ts-ignore
-      dispatch(setUser(userData));
+      dispatch(setUser({ user: userData, token }));
 
       setOpenForm(null);
       form.reset();

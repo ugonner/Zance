@@ -6,11 +6,18 @@ import { User } from "@/types";
 
 interface AuthState {
   user: User | null;
+  token: string | null;
   isAuthenticated: boolean;
+}
+
+interface UserPayload {
+  user: User;
+  token: string;
 }
 
 const initialState: AuthState = {
   user: null,
+  token: null,
   isAuthenticated: true,
 };
 
@@ -18,8 +25,9 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser(state, action: PayloadAction<User>) {
-      state.user = action.payload;
+    setUser(state, action: PayloadAction<UserPayload>) {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
       state.isAuthenticated = true;
     },
     logout(state) {
@@ -38,3 +46,5 @@ export const getIsAuthenticated = (state: RootState) =>
   state.auth.isAuthenticated;
 
 export const getLoggedInUser = (state: RootState) => state.auth.user;
+
+export const getToken = (state: RootState) => state.auth.token;
