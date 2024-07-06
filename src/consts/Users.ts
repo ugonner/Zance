@@ -10,6 +10,7 @@ export const DEFAULT_USER = {
     fullname: 'Unknown User',
     professionalTitle: '',
     location: '',
+    workplace: '',
     bio: '',
     interests: [],
     joiningDate: `${new Date()}`,

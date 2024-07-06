@@ -11,7 +11,7 @@ interface UserAvatarProps {
   fallbackProfile: string
 }
 
-const UserAvatar = ({ height = 8, width = 8, image, fallbackProfile }: UserAvatarProps) => {
+const UserAvatar = ({ height = 10, width = 10, image, fallbackProfile }: UserAvatarProps) => {
   return (
     <Avatar className={`h-${height} w-${width}`}>
       {image?.src && <AvatarImage src={image?.src} alt={image?.alt} />}

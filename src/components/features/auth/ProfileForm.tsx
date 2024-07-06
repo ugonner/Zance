@@ -12,9 +12,14 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
+import useApi from '@/hooks/useApi'
+import { getToken } from '@/store/reducers/authSlice'
+import { ProfileResponse } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useSelector } from 'react-redux'
 import CreatableSelect from 'react-select/creatable'
 import { z } from 'zod'
 
@@ -50,12 +55,59 @@ const profileFormSchema = z.object({
 })
 
 const ProfileForm = ({
-  isCreatingProfile = false,
+  isProcessing = false,
   onSuccess,
+  isInEditMode = false,
 }: {
-  isCreatingProfile: boolean
+  isProcessing: boolean
   onSuccess: (values: z.infer<typeof profileFormSchema>) => void
+  isInEditMode?: boolean
 }) => {
+  const token = useSelector(getToken)
+
+  const {
+    fetchData,
+    loading,
+    error,
+    data: profileData,
+  } = useApi<{ token: string }, ProfileResponse>()
+
+  const { toast } = useToast()
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      try {
+        if (token) {
+          await fetchData('user/profile', token)
+        }
+      } catch (err) {
+        toast({
+          variant: 'destructive',
+          title: `Something went wrong while fetching profile details! ${err}`,
+        })
+      }
+    }
+
+    getUserProfile()
+  }, [fetchData, toast, token])
+
+  // Feed existing user profile data in to the form
+  useEffect(() => {
+    if (profileData) {
+      const profile = profileData?.data?.user?.profile
+      form.reset({
+        fullName: profile?.fullname || '',
+        phoneNumber: profile?.contactDetails?.phone || '',
+        professionalTitle: profile?.professionalTitle || '',
+        linkedInLink: profile?.socialLinks?.linkedIn || '',
+        workPlace: profile?.workplace || '',
+        location: profile?.location || '',
+        bio: profile?.bio || '',
+        interests: profile?.interests || [],
+      })
+    }
+  }, [profileData])
+
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
@@ -212,11 +264,13 @@ const ProfileForm = ({
         />
 
         <Button type='submit'>
-          {isCreatingProfile ? (
+          {isProcessing ? (
             <span className='flex items-center gap-2'>
-              Creating
+              {isInEditMode ? 'Updating' : 'Creating'}
               <Loader />
             </span>
+          ) : isInEditMode ? (
+            'Update'
           ) : (
             'Create'
           )}

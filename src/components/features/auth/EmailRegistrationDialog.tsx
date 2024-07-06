@@ -11,17 +11,17 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import useApi from '@/hooks/useApi'
 import { cn } from '@/lib/utils'
-import { getLoggedInUser, setUser } from '@/store/reducers/authSlice'
+import { setUser } from '@/store/reducers/authSlice'
 import {
   EmailRegistrationFormData,
   EmailRegistrationResponse,
   FormType,
+  ProfileData,
   ProfileFormData,
   ProfileResponse,
-  profileData,
 } from '@/types'
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 import { Button } from '../../ui/button'
 import EmailRegistrationForm from './EmailRegistrationForm'
@@ -43,16 +43,13 @@ const EmailRegistrationDialog = ({
     EmailRegistrationResponse
   >()
 
-  const { updateData, loading: isCreatingProfile } = useApi<profileData, ProfileResponse>()
+  const { updateData, loading: isCreatingProfile } = useApi<ProfileData, ProfileResponse>()
 
   // A state that will track the form steps - for multi step form.
   const [step, setStep] = useState<1 | 2>(1)
 
   // Helpful derived states for reusability
   const isFirstStep = step === 1
-
-  const loggedInUser = useSelector(getLoggedInUser)
-  console.log('LOGGED IN USER ', loggedInUser)
 
   // A handler that will be executed when a user clicks login with email in the bottom section of the form
   const handleOpenLoginForm = () => {
@@ -67,8 +64,6 @@ const EmailRegistrationDialog = ({
         password: values.password,
       }
       const response = await createData('auth/register', registrationData)
-
-      console.log('RESPONSE USER ', response?.user)
 
       dispatch(setUser({ user: response?.user, token: '' }))
 
@@ -142,7 +137,7 @@ const EmailRegistrationDialog = ({
         {isFirstStep ? (
           <EmailRegistrationForm isRegistering={isRegistering} onSuccess={onRegistrationSubmit} />
         ) : (
-          <ProfileForm isCreatingProfile={isCreatingProfile} onSuccess={onProfileSubmit} />
+          <ProfileForm isProcessing={isCreatingProfile} onSuccess={onProfileSubmit} />
         )}
 
         {isFirstStep && (

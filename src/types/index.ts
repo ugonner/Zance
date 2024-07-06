@@ -11,6 +11,7 @@ export interface User {
     }
     profilePhoto: string
     fullname: string
+    workplace?: string
     professionalTitle: string
     location: string
     bio: string
@@ -48,11 +49,11 @@ export interface EmailRegistrationFormData {
   passwordConfirm?: string
 }
 
-export interface profileData {
+export interface ProfileData {
   profile: {
     fullname: string
     professionalTitle: string
-    workPlace?: string
+    workplace?: string
     location: string
     bio?: string
     interests: string[] | []

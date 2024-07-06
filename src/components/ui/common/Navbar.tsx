@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/menubar'
 import ROUTES from '@/consts/Routes'
 import { DEFAULT_USER } from '@/consts/Users'
-import { deleteCookie } from '@/lib/cookies'
+import useLogout from '@/hooks/useLogout'
 import { getLoggedInUser, logout } from '@/store/reducers/authSlice'
 import { Search } from 'lucide-react'
 import { CircleUser, LogOut, UserRoundCog } from 'lucide-react'
@@ -44,6 +44,8 @@ const Navbar = () => {
   const router = useRouter()
 
   const loggedInUser = useSelector(getLoggedInUser)
+
+  const { logout } = useLogout()
 
   const PROFILE_MENU = [
     {
@@ -68,11 +70,7 @@ const Navbar = () => {
     {
       title: 'Sign out',
       icon: React.createElement(LogOut),
-      onClick: () => {
-        dispatch(logout())
-        deleteCookie('token', { path: '/' })
-        router.push(ROUTES.AUTH)
-      },
+      onClick: logout,
     },
   ]
 
