@@ -24,13 +24,13 @@ import {
 import ROUTES from '@/consts/Routes'
 import { DEFAULT_USER } from '@/consts/Users'
 import useLogout from '@/hooks/useLogout'
-import { getLoggedInUser, logout } from '@/store/reducers/authSlice'
+import { getFallbackProfile } from '@/lib/Users'
+import { getLoggedInUser } from '@/store/reducers/authSlice'
 import { Search } from 'lucide-react'
 import { CircleUser, LogOut, UserRoundCog } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import { Button } from '../button'
 import Container from '../containers/Container'
@@ -40,9 +40,6 @@ import Logo from './Logo'
 import ThemeToggler from './ThemeToggler'
 
 const Navbar = () => {
-  const dispatch = useDispatch()
-  const router = useRouter()
-
   const loggedInUser = useSelector(getLoggedInUser)
 
   const { logout } = useLogout()
@@ -78,9 +75,7 @@ const Navbar = () => {
 
   const userProfile = loggedInUser?.profile || DEFAULT_USER.profile
 
-  const fallbackProfile = userProfile?.fullname
-    ? `${userProfile?.fullname.split(' ')[0][0] || ''}${userProfile?.fullname.split(' ')[1]?.[0] || ''}`
-    : 'U'
+  const fallbackProfile = getFallbackProfile(userProfile?.fullname)
 
   // Since we are handling logout differently. We need some custom dialogs only in logout click
   const logoutMenu = PROFILE_MENU.find(menu => menu.title.toLowerCase() === 'sign out')

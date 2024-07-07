@@ -11,8 +11,8 @@ import { useToast } from '@/components/ui/use-toast'
 import ROUTES from '@/consts/Routes'
 import { DEFAULT_USER } from '@/consts/Users'
 import useApi from '@/hooks/useApi'
-import useLogout from '@/hooks/useLogout'
 import { formatDateString } from '@/lib/DateTime'
+import { getFallbackProfile } from '@/lib/Users'
 import { getToken } from '@/store/reducers/authSlice'
 import { ProfileResponse } from '@/types'
 import { Linkedin, Mail, MapPin, Phone, SquarePen } from 'lucide-react'
@@ -35,8 +35,6 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
   } = useApi<{ token: string }, ProfileResponse>()
 
   const [isSheetOpen, setIsSheetOpen] = useState(false)
-
-  const { logout } = useLogout()
 
   const hasError = error && !profileData && !loading
 
@@ -72,9 +70,7 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
     interests,
   } = profileData?.data?.user?.profile || DEFAULT_USER.profile
 
-  const fallbackProfile = fullname
-    ? `${fullname.split(' ')[0][0] || ''}${fullname.split(' ')[1]?.[0] || ''}`
-    : 'U'
+  const fallbackProfile = getFallbackProfile(fullname)
 
   const toggleSheet = () => {
     setIsSheetOpen(currState => (currState ? false : true))

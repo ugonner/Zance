@@ -69,10 +69,3 @@ export const deleteCookie = (name: string, options: { [key: string]: any } = {})
 
   document.cookie = cookieString
 }
-
-// setCookie('token', 'your-token-value', { expires: 'forever', path: '/' });
-// Deleting a Cookie:
-// typescript
-// Copy code
-// // Example: Delete a cookie named "token"
-// deleteCookie('token', { path: '/' }); // Specify the same path used to set the cookie
