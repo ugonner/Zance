@@ -3,14 +3,18 @@
 import ProfileForm from '@/components/features/auth/ProfileForm'
 import Heading from '@/components/ui/common/Heading'
 import { useToast } from '@/components/ui/use-toast'
+import ROUTES from '@/consts/Routes'
 import useApi from '@/hooks/useApi'
 import { getToken } from '@/store/reducers/authSlice'
 import { ProfileData, ProfileFormData, ProfileResponse } from '@/types'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
 const EditProfilePage = () => {
+  const router = useRouter()
   const { toast } = useToast()
+
   const token = useSelector(getToken)
 
   const { updateData, loading: isCreatingProfile } = useApi<ProfileData, ProfileResponse>()
@@ -21,7 +25,7 @@ const EditProfilePage = () => {
         profile: {
           fullname: values.fullName,
           professionalTitle: values.professionalTitle,
-          workPlace: values.workPlace,
+          workplace: values.workPlace,
           location: values.location,
           bio: values.bio,
           interests: values.interests,
@@ -38,6 +42,8 @@ const EditProfilePage = () => {
         await updateData('user/profile', profileDataPayload, token)
       }
 
+      router.push(ROUTES.HOME)
+
       toast({
         title: `Profile Updated Successfully!`,
       })
@@ -48,6 +54,7 @@ const EditProfilePage = () => {
       })
     }
   }
+
   return (
     <section className='mx-auto min-h-screen max-w-3xl'>
       <Heading type='secondary'>Edit User Profile</Heading>

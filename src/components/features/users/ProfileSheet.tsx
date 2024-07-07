@@ -72,7 +72,9 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
     interests,
   } = profileData?.data?.user?.profile || DEFAULT_USER.profile
 
-  const fallbackProfile = `${fullname?.split(' ')[0][0] + fullname?.split(' ')[1][0]}`
+  const fallbackProfile = fullname
+    ? `${fullname.split(' ')[0][0] || ''}${fullname.split(' ')[1]?.[0] || ''}`
+    : 'U'
 
   const toggleSheet = () => {
     setIsSheetOpen(currState => (currState ? false : true))
@@ -114,9 +116,6 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
             <Description className='text-center !text-base text-red-500'>
               Something went very wrong! Try logging out and logging in again!
             </Description>
-            <Button variant='secondary' onClick={logout} className='text-sm'>
-              Log out
-            </Button>
           </section>
         ) : (
           <section>
@@ -149,7 +148,9 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
                   {/* Workplace */}
                   <div className='flex flex-col justify-center'>
                     <h2 className='text-sm font-semibold'>{professionalTitle}</h2>
-                    <h3 className='text-sm text-gray-600 dark:text-gray-400'>{workplace}</h3>
+                    {workplace && (
+                      <h3 className='text-sm text-gray-600 dark:text-gray-400'>{workplace}</h3>
+                    )}
                   </div>
                 </div>
               )}
@@ -160,7 +161,11 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
             {/* Bio */}
             <div className='flex flex-col justify-center gap-2'>
               <h2 className='text-lg font-semibold'>Bio</h2>
-              {loading ? <Skeleton className='h-10' /> : <p className='text-sm'>{bio}</p>}
+              {!loading && !bio ? (
+                <p className='text-sm'>You haven&apos;t set your bio yet.</p>
+              ) : (
+                <>{loading ? <Skeleton className='h-10' /> : <p className='text-sm'>{bio}</p>}</>
+              )}
             </div>
 
             <Separator className='my-4' />
@@ -172,19 +177,13 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
               {loading ? (
                 <Skeleton className='h-6 w-1/3' />
               ) : (
-                <>
-                  {socialLinks?.linkedIn ? (
-                    <Link
-                      target='_blank'
-                      href={socialLinks?.linkedIn}
-                      className='flex items-center gap-2'>
-                      <Linkedin size={18} className='text-primary' />
-                      <p className='text-sm font-medium hover:font-semibold'>{fullname}</p>
-                    </Link>
-                  ) : (
-                    <h2 className='text-sm'>You haven&apos;t provided the link yet</h2>
-                  )}
-                </>
+                <Link
+                  target='_blank'
+                  href={socialLinks?.linkedIn}
+                  className='flex items-center gap-2'>
+                  <Linkedin size={18} className='text-primary' />
+                  <p className='text-sm font-medium hover:font-semibold'>{fullname}</p>
+                </Link>
               )}
             </div>
 
@@ -236,7 +235,15 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
                 </div>
               ) : (
                 <div className='flex flex-wrap items-center gap-2'>
-                  {interests?.map(interest => <InterestCard key={interest} interest={interest} />)}
+                  {!interests?.length ? (
+                    <p className='text-sm'>You haven&apos;t entered any interest yet.</p>
+                  ) : (
+                    <>
+                      {interests?.map(interest => (
+                        <InterestCard key={interest} interest={interest} />
+                      ))}
+                    </>
+                  )}
                 </div>
               )}
             </div>

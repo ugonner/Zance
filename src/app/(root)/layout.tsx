@@ -12,7 +12,7 @@ export default function AppLayout({
   return (
     <>
       <Navbar />
-      <Container className='py-28'>{children}</Container>
+      <Container className='relative py-28'>{children}</Container>
     </>
   )
 }

@@ -78,7 +78,9 @@ const Navbar = () => {
 
   const userProfile = loggedInUser?.profile || DEFAULT_USER.profile
 
-  const fallbackProfile = `${userProfile?.fullname?.split(' ')?.[0]?.[0] + userProfile?.fullname?.split(' ')?.[1]?.[0]}`
+  const fallbackProfile = userProfile?.fullname
+    ? `${userProfile?.fullname.split(' ')[0][0] || ''}${userProfile?.fullname.split(' ')[1]?.[0] || ''}`
+    : 'U'
 
   // Since we are handling logout differently. We need some custom dialogs only in logout click
   const logoutMenu = PROFILE_MENU.find(menu => menu.title.toLowerCase() === 'sign out')

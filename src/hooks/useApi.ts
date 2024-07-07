@@ -31,6 +31,12 @@ const useApi = <RequestBody, ResponseBody>() => {
         headers['Authorization'] = `Bearer ${token}`
       }
 
+      await new Promise(resolve =>
+        setTimeout(() => {
+          resolve('FUCK')
+        }, 5000),
+      )
+
       const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
         method: method || 'GET',
         headers,
@@ -57,28 +63,28 @@ const useApi = <RequestBody, ResponseBody>() => {
     (endpoint: string, token?: string) => {
       return request(endpoint, { token })
     },
-    [request]
+    [request],
   )
 
   const createData = useCallback(
     (endpoint: string, body: RequestBody, token?: string) => {
       return request(endpoint, { method: 'POST', body, token })
     },
-    [request]
+    [request],
   )
 
   const updateData = useCallback(
     (endpoint: string, body: RequestBody, token?: string) => {
       return request(endpoint, { method: 'PUT', body, token })
     },
-    [request]
+    [request],
   )
 
   const deleteData = useCallback(
     (endpoint: string, token?: string) => {
       return request(endpoint, { method: 'DELETE', token })
     },
-    [request]
+    [request],
   )
 
   return {

@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import FullPageLoader from '@/components/ui/common/FullPageLoader'
 import Loader from '@/components/ui/common/Loader'
 import {
   Form,
@@ -75,6 +76,8 @@ const ProfileForm = ({
   const { toast } = useToast()
 
   useEffect(() => {
+    if (!isInEditMode) return
+
     const getUserProfile = async () => {
       try {
         if (token) {
@@ -89,11 +92,11 @@ const ProfileForm = ({
     }
 
     getUserProfile()
-  }, [fetchData, toast, token])
+  }, [fetchData, toast, token, isInEditMode])
 
   // Feed existing user profile data in to the form
   useEffect(() => {
-    if (profileData) {
+    if (profileData && isInEditMode) {
       const profile = profileData?.data?.user?.profile
       form.reset({
         fullName: profile?.fullname || '',
@@ -106,7 +109,7 @@ const ProfileForm = ({
         interests: profile?.interests || [],
       })
     }
-  }, [profileData])
+  }, [profileData, isInEditMode])
 
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
@@ -123,8 +126,17 @@ const ProfileForm = ({
   })
 
   const onSubmit = (values: z.infer<typeof profileFormSchema>) => {
+    // Uncomment this if needed in future
+    // if (!form?.formState?.isDirty)
+    //   return toast({
+    //     variant: 'destructive',
+    //     title: `You need to make some changes in order to continue!`,
+    //   })
+
     onSuccess(values)
   }
+
+  if (loading && !error) return <FullPageLoader />
 
   return (
     <Form {...form}>
@@ -230,7 +242,7 @@ const ProfileForm = ({
             <FormItem>
               <FormLabel>Enter your Bio</FormLabel>
               <FormControl>
-                <Textarea rows={4} placeholder='Describe yourself shortly' {...field} />
+                <Textarea rows={6} placeholder='Describe yourself shortly' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
