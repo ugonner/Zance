@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import FullPageError from '@/components/ui/common/FullPageError'
 import FullPageLoader from '@/components/ui/common/FullPageLoader'
 import Loader from '@/components/ui/common/Loader'
 import {
@@ -69,7 +70,7 @@ const ProfileForm = ({
   const {
     fetchData,
     loading,
-    error,
+    error: fetchingError,
     data: profileData,
   } = useApi<{ token: string }, ProfileResponse>()
 
@@ -136,7 +137,15 @@ const ProfileForm = ({
     onSuccess(values)
   }
 
-  if (loading && !error) return <FullPageLoader />
+  if (loading && !fetchingError) return <FullPageLoader />
+
+  if (isInEditMode && !loading && fetchingError)
+    return (
+      <FullPageError
+        title="Oops! Couldn't fetch profile details"
+        description={fetchingError?.message}
+      />
+    )
 
   return (
     <Form {...form}>
