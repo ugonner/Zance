@@ -17,7 +17,7 @@ const EditProfilePage = () => {
 
   const token = useSelector(getToken)
 
-  const { updateData, loading: isCreatingProfile } = useApi<ProfileData, ProfileResponse>()
+  const { updateData, loading: isUpdatingProfile } = useApi<ProfileData, ProfileResponse>()
 
   const onProfileSubmit = async (values: ProfileFormData) => {
     try {
@@ -58,7 +58,7 @@ const EditProfilePage = () => {
   return (
     <section className='mx-auto max-w-3xl'>
       <Heading type='secondary'>Edit User Profile</Heading>
-      <ProfileForm isProcessing={isCreatingProfile} onSuccess={onProfileSubmit} isInEditMode />
+      <ProfileForm isProcessing={isUpdatingProfile} onSuccess={onProfileSubmit} isInEditMode />
     </section>
   )
 }

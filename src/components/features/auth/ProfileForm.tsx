@@ -284,7 +284,7 @@ const ProfileForm = ({
           )}
         />
 
-        <Button type='submit'>
+        <Button type='submit' disabled={isProcessing}>
           {isProcessing ? (
             <span className='flex items-center gap-2'>
               {isInEditMode ? 'Updating' : 'Creating'}
