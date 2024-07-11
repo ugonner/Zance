@@ -31,13 +31,8 @@ const useApi = <RequestBody, ResponseBody>() => {
         headers['Authorization'] = `Bearer ${token}`
       }
 
-      await new Promise(resolve =>
-        setTimeout(() => {
-          resolve('FUCK')
-        }, 5000),
-      )
-
       const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+        credentials: 'include',
         method: method || 'GET',
         headers,
         body: body ? JSON.stringify(body) : undefined,

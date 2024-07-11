@@ -76,7 +76,7 @@ const LoginDialog = ({
       const userData = res.data.user
 
       // @ts-ignore
-      setCookie('token', token, { expires: 'forever', path: '/' })
+      setCookie('token', token, { path: '/' })
 
       // @ts-ignore
       dispatch(setUser({ user: userData, token }))

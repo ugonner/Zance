@@ -14,7 +14,7 @@ export const setCookie = (name: string, value: string, options: { [key: string]:
     cookieString += `; expires=${farFuture.toUTCString()}`
   } else if (typeof options.expires === 'number') {
     const expireDate = new Date()
-    expireDate.setDate(expireDate.getDate() + options.expires)
+    expireDate.setTime(expireDate.getTime() + 23 * 60 * 60 * 1000 + 58 * 60 * 1000)
     cookieString += `; expires=${expireDate.toUTCString()}`
   }
 
