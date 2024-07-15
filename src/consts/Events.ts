@@ -222,4 +222,9 @@ const EVENTS = [
   },
 ]
 
+export const locationOptions = [
+  { value: 'online', label: 'Online' },
+  { value: 'physical', label: 'Physical' },
+]
+
 export default EVENTS
