@@ -15,6 +15,10 @@ interface UserPayload {
   token: string
 }
 
+interface NamePayload {
+  fullname: string
+}
+
 const initialState: AuthState = {
   user: null,
   token: null,
@@ -30,6 +34,16 @@ const authSlice = createSlice({
       state.token = action.payload.token
       state.isAuthenticated = true
     },
+    setUserFullname(state, action: PayloadAction<NamePayload>) {
+      if (state.user)
+        state.user = {
+          ...state.user,
+          profile: {
+            ...state.user?.profile,
+            fullname: action.payload?.fullname,
+          },
+        }
+    },
     logout(state) {
       state.user = null
       state.isAuthenticated = false
@@ -37,7 +51,7 @@ const authSlice = createSlice({
   },
 })
 
-export const { setUser, logout } = authSlice.actions
+export const { setUser, setUserFullname, logout } = authSlice.actions
 
 export default authSlice.reducer
 

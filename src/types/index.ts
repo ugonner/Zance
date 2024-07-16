@@ -80,7 +80,5 @@ export interface ProfileFormData {
 export interface ProfileResponse {
   status: string
   message: string
-  data: {
-    user: User
-  }
+  data: User
 }

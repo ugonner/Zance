@@ -5,17 +5,19 @@ import Heading from '@/components/ui/common/Heading'
 import { useToast } from '@/components/ui/use-toast'
 import ROUTES from '@/consts/Routes'
 import useApi from '@/hooks/useApi'
-import { getToken } from '@/store/reducers/authSlice'
+import { getToken, setUserFullname } from '@/store/reducers/authSlice'
 import { ProfileData, ProfileFormData, ProfileResponse } from '@/types'
 import { useRouter } from 'next/navigation'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const EditProfilePage = () => {
   const router = useRouter()
   const { toast } = useToast()
 
   const token = useSelector(getToken)
+
+  const dispatch = useDispatch()
 
   const { updateData, loading: isUpdatingProfile } = useApi<ProfileData, ProfileResponse>()
 
@@ -39,7 +41,10 @@ const EditProfilePage = () => {
       }
 
       if (token) {
-        await updateData('user/profile', profileDataPayload, token)
+        const updatedUser = await updateData('user/profile', profileDataPayload, token)
+
+        const updatedFullname = updatedUser?.data?.profile?.fullname
+        dispatch(setUserFullname({ fullname: updatedFullname }))
       }
 
       router.push(ROUTES.HOME)
