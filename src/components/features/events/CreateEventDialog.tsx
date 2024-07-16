@@ -10,23 +10,46 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import useApi from '@/hooks/useApi'
 import { Box, CircleArrowLeft, SquarePlus, Upload } from 'lucide-react'
 import React, { useState } from 'react'
 
 import EventForm from './EventForm'
 
 const CreateEventDialog = () => {
+  const { createData } = useApi<any, any>()
+
   // A state that will track the form steps - for multi step form.
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const isFirstStep = step === 1
   const isSecondStep = step === 2
   const isThirdStep = step == 3
 
-  // const onSubmit = (values: z.infer<typeof formSchema>) => {
-  //   console.log('Event Form Values', values)
-  //   //   setStep(1);
-  //   //   form.reset();
-  // }
+  const onSubmit = async (values: any) => {
+    const formData = new FormData()
+
+    formData.append('name', values.name)
+    formData.append('description', values.description)
+    values.tags.forEach((tag: string) => formData.append('tags[]', tag))
+
+    if (values.banner) formData.append('banner', values.banner)
+    if (values.brochure) formData.append('brochure', values.brochure)
+
+    formData.append('startDate', values.startDate.toISOString())
+    formData.append('endDate', values.endDate.toISOString())
+    formData.append('timezone', values.timezone)
+    formData.append('location[type]', values.location.type)
+    if (values.location.address) formData.append('location[address]', values.location.address)
+    if (values.location.meetingLink)
+      formData.append('location[meetingLink]', values.location.meetingLink)
+
+    try {
+      const result = await createData('events', formData)
+      console.log('Event Created Successfully', result)
+    } catch (error) {
+      console.error('Error creating event', error)
+    }
+  }
 
   return (
     <Dialog>
@@ -59,7 +82,7 @@ const CreateEventDialog = () => {
           )}
         </DialogHeader>
 
-        <EventForm step={step} setStep={setStep} />
+        <EventForm step={step} setStep={setStep} onSuccess={onSubmit} />
 
         <DialogFooter>{/* <Button type="submit">Save changes</Button> */}</DialogFooter>
       </DialogContent>

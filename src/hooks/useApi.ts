@@ -35,7 +35,7 @@ const useApi = <RequestBody, ResponseBody>() => {
         credentials: 'include',
         method: method || 'GET',
         headers,
-        body: body ? JSON.stringify(body) : undefined,
+        body: body instanceof FormData ? body : JSON.stringify(body),
       })
 
       if (!response.ok) {
