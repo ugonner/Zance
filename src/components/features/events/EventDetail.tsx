@@ -8,12 +8,14 @@ import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
 import GridContainer from '@/components/ui/containers/GridContainer'
 import { Separator } from '@/components/ui/separator'
+import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
 import EVENTS from '@/consts/Events'
 import { Event } from '@/types'
 import { CalendarDays, Clock9, Copy, File, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
+// Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
 const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent: boolean }) => {
   return (
     <section className='col-span-full flex w-full flex-col justify-center gap-4 md:gap-8'>
@@ -44,7 +46,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         {/* Event Image */}
         <div className='relative aspect-video flex-1 overflow-hidden rounded-sm md:flex-[.6]'>
           <Image
-            src={event?.banner ? event.banner : ''}
+            src={event?.banner ? event.banner : DEFAULT_PLACEHOLDER_IMAGE}
             fill
             objectFit='cover'
             alt={`Image for event ${event?.name}`}
@@ -76,11 +78,11 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
           <Heading type='tertiary'>Event Brochure</Heading>
           <Description className='flex items-center gap-2'>
             <File className='cursor-pointer' size={20} />
-            <span>{event?.eventBrochure || 'Brochure Here'}</span>
+            <span>{event?.brochure || 'Brochure Here'}</span>
           </Description>
         </div>
 
-        {isANewEvent || (
+        {isANewEvent && (
           <>
             <div className='flex flex-col gap-2'>
               <Heading type='tertiary'>Event Code</Heading>
@@ -120,7 +122,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         )}
       </div>
 
-      {isANewEvent || <Button className='max-w-72'>Register for this event</Button>}
+      {isANewEvent && <Button className='max-w-72'>Register for this event</Button>}
     </section>
   )
 }

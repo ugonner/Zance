@@ -89,6 +89,8 @@ export interface Event {
   tags: string[]
   startDate: Date
   endDate: Date
+  banner?: string
+  brochure?: string
   timezone: string
   location: {
     type: 'online' | 'physical'

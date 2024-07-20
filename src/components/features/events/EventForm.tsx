@@ -2,6 +2,10 @@
 
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import Description from '@/components/ui/common/Description'
+import Heading from '@/components/ui/common/Heading'
+import Loader from '@/components/ui/common/Loader'
+import { DialogClose } from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -11,14 +15,16 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 import { timezoneOptions } from '@/consts/DateTime'
 import { locationOptions } from '@/consts/Events'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
-import { CalendarDays, Upload } from 'lucide-react'
-import React, { Dispatch, SetStateAction, useRef } from 'react'
+import { BadgeCheck, CalendarDays, Copy, Upload } from 'lucide-react'
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import CreatableSelect from 'react-select/creatable'
 import { z } from 'zod'
@@ -72,7 +78,7 @@ const formSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Meeting link is required for online events',
-        path: ['meetingLink'],
+        path: ['location', 'meetingLink'],
       })
     }
 
@@ -80,22 +86,33 @@ const formSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Address is required for physical events',
-        path: ['address'],
+        path: ['location', 'address'],
       })
     }
   })
 
 interface EventFormProps {
-  step?: 1 | 2 | 3
-  setStep?: Dispatch<SetStateAction<1 | 2 | 3>>
-  onSuccess: (values: z.infer<typeof formSchema>) => void
+  step?: 1 | 2 | 3 | 4
+  setStep?: Dispatch<SetStateAction<1 | 2 | 3 | 4>>
+  onSuccess: (values: z.infer<typeof formSchema>) => Promise<any>
+  isProcessing?: boolean
 }
 
-const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: EventFormProps) => {
+const EventForm = ({
+  step = 1,
+  setStep = () => {},
+  onSuccess,
+  isProcessing = false,
+}: EventFormProps) => {
+  const { toast } = useToast()
+
+  const [createdEventCode, setCreatedEventCode] = useState(null)
+
   // Helpful derived states for reusability
   const isFirstStep = step === 1
   const isSecondStep = step === 2
   const isThirdStep = step == 3
+  const isFourthStep = step == 4
 
   // Refs for file inputs
   const bannerInputRef = useRef(null)
@@ -108,6 +125,24 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
       location: { type: 'online' },
     },
   })
+
+  const handleCopyClick = () => {
+    if (!createdEventCode) return
+
+    navigator.clipboard.writeText(createdEventCode).then(
+      () => {
+        toast({
+          title: `Event code copied to clipboard!`,
+        })
+      },
+      err => {
+        toast({
+          variant: 'destructive',
+          title: `Failed to copy text: ${err}`,
+        })
+      },
+    )
+  }
 
   const handleFirstNextClick = async () => {
     const isStepValid = await form.trigger(['name', 'description', 'tags'])
@@ -148,8 +183,13 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
     }
   }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    onSuccess(values)
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const result = await onSuccess(values)
+
+    if (result) {
+      setCreatedEventCode(result?.data?.eventCode)
+      setStep(4)
+    }
   }
   return (
     <Form {...form}>
@@ -421,14 +461,52 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
           </>
         )}
 
+        {/* Event Preview */}
         {isThirdStep && (
-          <EventDetail
-            event={{
-              ...form.getValues(),
-              startDate: format(form.getValues()?.startDate, 'PPP'),
-              endDate: format(form.getValues()?.endDate, 'PPP'),
-            }}
-          />
+          <>
+            <EventDetail
+              event={{
+                ...form.getValues(),
+                startDate: format(form?.getValues()?.startDate, 'PPP'),
+                endDate: format(form?.getValues()?.endDate, 'PPP'),
+              }}
+            />
+            <Button className='mt-4' type='submit'>
+              {isProcessing ? (
+                <span className='flex items-center gap-2'>
+                  Creating
+                  <Loader />
+                </span>
+              ) : (
+                <>Create Event</>
+              )}
+            </Button>
+          </>
+        )}
+
+        {/* Event Creation Successful UI */}
+        {isFourthStep && (
+          <div className='flex flex-col items-center justify-center gap-2 text-center'>
+            <BadgeCheck size={50} />
+            <Heading type='secondary'>Congratulations</Heading>
+            <Description>You just created a new event</Description>
+            <Separator className='my-2 w-10/12 bg-secondary' />
+            <Description>Event Code</Description>
+            <Description className='flex items-center gap-2 !text-xl !font-bold'>
+              <span>{createdEventCode}</span>
+              <Copy
+                onClick={handleCopyClick}
+                className='cursor-pointer'
+                size={20}
+                strokeWidth={2.2}
+              />
+            </Description>
+            <DialogClose asChild>
+              <Button size='lg' onClick={() => setStep(1)} type='button' className='mt-2'>
+                Finish
+              </Button>
+            </DialogClose>
+          </div>
         )}
       </form>
     </Form>

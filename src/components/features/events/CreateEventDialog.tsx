@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { useToast } from '@/components/ui/use-toast'
 import useApi from '@/hooks/useApi'
 import { getToken } from '@/store/reducers/authSlice'
 import { Box, CircleArrowLeft, SquarePlus } from 'lucide-react'
@@ -21,24 +22,28 @@ import EventForm from './EventForm'
 const CreateEventDialog = () => {
   const token = useSelector(getToken)
 
-  const { createData } = useApi<any, any>()
+  const { createData, loading: isProcessing } = useApi<any, any>()
+
+  const { toast } = useToast()
 
   // A state that will track the form steps - for multi step form.
-  const [step, setStep] = useState<1 | 2 | 3>(1)
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
   const isFirstStep = step === 1
   const isSecondStep = step === 2
   const isThirdStep = step == 3
+  const isFourthStep = step == 4
 
   const onSubmit = async (values: any) => {
     try {
       if (token) {
         const result = await createData('events', values, token)
-        console.log('Event Created Successfully', result)
+        return result
       }
     } catch (error) {
-      console.log(error)
-
-      console.error('Error creating event', error)
+      toast({
+        variant: 'destructive',
+        title: `${error}`,
+      })
     }
   }
 
@@ -54,7 +59,7 @@ const CreateEventDialog = () => {
         onInteractOutside={e => {
           e.preventDefault()
         }}>
-        {!isFirstStep && (
+        {!isFirstStep && !isFourthStep && (
           <CircleArrowLeft
             size={28}
             className='cursor-pointer transition-transform hover:scale-105'
@@ -73,12 +78,12 @@ const CreateEventDialog = () => {
             </>
           ) : isSecondStep ? (
             <DialogTitle className='!text-lg'>Event Details</DialogTitle>
-          ) : (
+          ) : isThirdStep ? (
             <DialogTitle className='!text-lg'>Event Preview</DialogTitle>
-          )}
+          ) : null}
         </DialogHeader>
 
-        <EventForm step={step} setStep={setStep} onSuccess={onSubmit} />
+        <EventForm step={step} setStep={setStep} onSuccess={onSubmit} isProcessing={isProcessing} />
 
         <DialogFooter>{/* <Button type="submit">Save changes</Button> */}</DialogFooter>
       </DialogContent>
