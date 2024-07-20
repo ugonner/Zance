@@ -23,8 +23,10 @@ const useApi = <RequestBody, ResponseBody>() => {
     const { method, body, token } = options || {}
 
     try {
-      const headers: HeadersInit = {
-        'Content-Type': 'application/json',
+      const headers: HeadersInit = {}
+
+      if (!(body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json'
       }
 
       if (token) {

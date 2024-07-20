@@ -11,12 +11,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import useApi from '@/hooks/useApi'
-import { Box, CircleArrowLeft, SquarePlus, Upload } from 'lucide-react'
+import { getToken } from '@/store/reducers/authSlice'
+import { Box, CircleArrowLeft, SquarePlus } from 'lucide-react'
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 
 import EventForm from './EventForm'
 
 const CreateEventDialog = () => {
+  const token = useSelector(getToken)
+
   const { createData } = useApi<any, any>()
 
   // A state that will track the form steps - for multi step form.
@@ -26,27 +30,14 @@ const CreateEventDialog = () => {
   const isThirdStep = step == 3
 
   const onSubmit = async (values: any) => {
-    const formData = new FormData()
-
-    formData.append('name', values.name)
-    formData.append('description', values.description)
-    values.tags.forEach((tag: string) => formData.append('tags[]', tag))
-
-    if (values.banner) formData.append('banner', values.banner)
-    if (values.brochure) formData.append('brochure', values.brochure)
-
-    formData.append('startDate', values.startDate.toISOString())
-    formData.append('endDate', values.endDate.toISOString())
-    formData.append('timezone', values.timezone)
-    formData.append('location[type]', values.location.type)
-    if (values.location.address) formData.append('location[address]', values.location.address)
-    if (values.location.meetingLink)
-      formData.append('location[meetingLink]', values.location.meetingLink)
-
     try {
-      const result = await createData('events', formData)
-      console.log('Event Created Successfully', result)
+      if (token) {
+        const result = await createData('events', values, token)
+        console.log('Event Created Successfully', result)
+      }
     } catch (error) {
+      console.log(error)
+
       console.error('Error creating event', error)
     }
   }
@@ -59,7 +50,10 @@ const CreateEventDialog = () => {
           <span className='font-medium'>Create Event</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        onInteractOutside={e => {
+          e.preventDefault()
+        }}>
         {!isFirstStep && (
           <CircleArrowLeft
             size={28}
@@ -77,8 +71,10 @@ const CreateEventDialog = () => {
                 <Heading type='secondary'>Create new event</Heading>
               </DialogTitle>
             </>
-          ) : (
+          ) : isSecondStep ? (
             <DialogTitle className='!text-lg'>Event Details</DialogTitle>
+          ) : (
+            <DialogTitle className='!text-lg'>Event Preview</DialogTitle>
           )}
         </DialogHeader>
 

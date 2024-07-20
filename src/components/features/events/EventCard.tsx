@@ -1,4 +1,5 @@
 import Heading from '@/components/ui/common/Heading'
+import { format } from 'date-fns'
 import { Bookmark, Share } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -8,11 +9,11 @@ import React from 'react'
 const EventCard = ({ event }: { event: any }) => {
   return (
     <Link
-      href={`/events/${event?.id}`}
+      href={`/events/${event?._id}`}
       className='group col-span-full overflow-hidden rounded-sm md:col-span-2 lg:col-span-3'>
       <figure className='relative aspect-video overflow-hidden rounded-sm'>
         <Image
-          src={event.image}
+          src={event?.banner}
           alt='Event Card'
           layout='fill'
           objectFit='cover'
@@ -23,9 +24,11 @@ const EventCard = ({ event }: { event: any }) => {
 
       <section className='flex items-start py-2'>
         <div className='flex flex-[4] flex-col justify-center gap-0.5 text-base'>
-          <h2 className='text-lg font-medium'>{event.title}</h2>
-          <time className='text-primary'>{event.date}</time>
-          <p className='text-sm text-gray-400'>{event.location}</p>
+          <h2 className='text-lg font-medium'>{event.name}</h2>
+          {/* <time className='text-primary'>{format(event?.date, 'PPP')}</time> */}
+          <time className='text-primary'>Tuesday, 10th February</time>
+          {/* <p className='text-sm text-gray-400'>{event.location}</p> */}
+          <p className='text-sm text-gray-400'>Itahari, Nepal</p>
         </div>
         <div className='flex flex-1 justify-end'>
           <Bookmark

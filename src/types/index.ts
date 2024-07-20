@@ -82,3 +82,21 @@ export interface ProfileResponse {
   message: string
   data: User
 }
+
+export interface Event {
+  name: string
+  description: string
+  tags: string[]
+  startDate: Date
+  endDate: Date
+  timezone: string
+  location: {
+    type: 'online' | 'physical'
+    meetingLink?: string
+    address?: string
+  }
+  creator: string
+  _id: string
+  eventCode: string
+  __v: number
+}

@@ -23,6 +23,8 @@ import { useForm } from 'react-hook-form'
 import CreatableSelect from 'react-select/creatable'
 import { z } from 'zod'
 
+import EventDetail from './EventDetail'
+
 const formSchema = z
   .object({
     name: z
@@ -101,6 +103,7 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    mode: 'onChange',
     defaultValues: {
       location: { type: 'online' },
     },
@@ -108,8 +111,6 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
 
   const handleFirstNextClick = async () => {
     const isStepValid = await form.trigger(['name', 'description', 'tags'])
-    console.log('STEP VALID ', isStepValid)
-    console.log('SECOND STEP SUBMITTED')
 
     if (isStepValid) setStep(2)
   }
@@ -139,9 +140,12 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
       'location.type',
       'timezone',
     ])
-    console.log('STEP VALID ', isStepValid)
 
-    if (isStepValid) setStep(2)
+    if (isStepValid) {
+      console.log('EVENT VALUES', form.getValues())
+
+      setStep(3)
+    }
   }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -339,41 +343,6 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
                   </FormItem>
                 )}
               />
-
-              {/* <FormField
-                control={form.control}
-                name='startDate'
-                render={({ field }) => (
-                  <FormItem className='flex flex-1 flex-col'>
-                    <FormLabel>End Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground',
-                            )}>
-                            {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
-                            <CalendarDays className='ml-auto h-4 w-4 opacity-50' />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className='w-auto p-0' align='start'>
-                        <Calendar
-                          mode='single'
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={date => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
             </div>
 
             <FormField
@@ -403,7 +372,7 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
                   <FormControl>
                     <CreatableSelect
                       options={locationOptions}
-                      value={locationOptions.find(option => option.value === field.value?.type)}
+                      value={locationOptions?.find(option => option.value === field.value?.type)}
                       onChange={selectedOption => field.onChange({ type: selectedOption?.value })}
                     />
                   </FormControl>
@@ -446,8 +415,20 @@ const EventForm = ({ step = 1, setStep = () => {}, onSuccess = () => {} }: Event
             )}
 
             {/* <Button type='submit' onClick={handleSecondNextClick}> */}
-            <Button type='submit'>Submit</Button>
+            <Button type='button' onClick={handleSecondNextClick}>
+              Next
+            </Button>
           </>
+        )}
+
+        {isThirdStep && (
+          <EventDetail
+            event={{
+              ...form.getValues(),
+              startDate: format(form.getValues()?.startDate, 'PPP'),
+              endDate: format(form.getValues()?.endDate, 'PPP'),
+            }}
+          />
         )}
       </form>
     </Form>
