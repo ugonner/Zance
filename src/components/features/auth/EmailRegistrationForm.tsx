@@ -48,7 +48,7 @@ const EmailRegistrationForm = ({
   onSuccess,
 }: {
   isRegistering: boolean
-  onSuccess: (values: z.infer<typeof registrationFormSchema>) => void
+  onSuccess: (values: z.infer<typeof registrationFormSchema>) => Promise<boolean>
 }) => {
   const form = useForm<z.infer<typeof registrationFormSchema>>({
     resolver: zodResolver(registrationFormSchema),
@@ -60,9 +60,12 @@ const EmailRegistrationForm = ({
     },
   })
 
-  const onSubmit = (values: z.infer<typeof registrationFormSchema>) => {
-    onSuccess(values)
-    form.reset()
+  const onSubmit = async (values: z.infer<typeof registrationFormSchema>) => {
+    const success = await onSuccess(values)
+
+    if (success) {
+      form.reset()
+    }
   }
 
   return (

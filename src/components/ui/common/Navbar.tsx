@@ -51,9 +51,9 @@ const Navbar = () => {
       path: ROUTES.HOME,
     },
     {
-      title: 'Account settings',
+      title: 'Edit Profile',
       icon: React.createElement(UserRoundCog),
-      path: ROUTES.HOME,
+      path: ROUTES.PROFILE_EDIT,
     },
     {
       title: 'Separator',
@@ -130,7 +130,9 @@ const Navbar = () => {
                         />
 
                         <div className='flex flex-col justify-center'>
-                          <p className='text-base font-semibold'>{userProfile?.fullname}</p>
+                          <p className='text-base font-semibold'>
+                            {userProfile?.fullname || 'Unknown User'}
+                          </p>
                           <p className='text-sm text-gray-600 dark:text-gray-400'>{email}</p>
                         </div>
                       </div>

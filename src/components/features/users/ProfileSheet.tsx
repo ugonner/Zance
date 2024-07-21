@@ -55,6 +55,7 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
     getUserProfile()
   }, [fetchData, toast, token])
 
+  // @ts-ignore
   const email = profileData?.data?.user?.email
 
   const {
@@ -68,6 +69,7 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
     location,
     joiningDate,
     interests,
+    // @ts-ignore
   } = profileData?.data?.user?.profile || DEFAULT_USER.profile
 
   const fallbackProfile = getFallbackProfile(fullname)
@@ -132,7 +134,7 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
                     />
 
                     <div className='flex flex-col justify-center'>
-                      <p className='text-sm font-semibold'>{fullname}</p>
+                      <p className='text-sm font-semibold'>{fullname || 'Unknown User'}</p>
                       <p className='text-sm text-gray-600 dark:text-gray-400'>
                         Joined {formatDateString(joiningDate as string)}
                       </p>
@@ -143,7 +145,9 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
 
                   {/* Workplace */}
                   <div className='flex flex-col justify-center'>
-                    <h2 className='text-sm font-semibold'>{professionalTitle}</h2>
+                    <h2 className='text-sm font-semibold'>
+                      {professionalTitle || 'Professional Title Not Specified'}
+                    </h2>
                     {workplace && (
                       <h3 className='text-sm text-gray-600 dark:text-gray-400'>{workplace}</h3>
                     )}
@@ -172,14 +176,16 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
               <h2 className='text-lg font-semibold'>Socials</h2>
               {loading ? (
                 <Skeleton className='h-6 w-1/3' />
-              ) : (
+              ) : socialLinks?.linkedIn ? (
                 <Link
                   target='_blank'
-                  href={socialLinks?.linkedIn}
+                  href={socialLinks?.linkedIn || '#'}
                   className='flex items-center gap-2'>
                   <Linkedin size={18} className='text-primary' />
                   <p className='text-sm font-medium hover:font-semibold'>{fullname}</p>
                 </Link>
+              ) : (
+                <p className='text-sm'>No LinkedIn link specified yet</p>
               )}
             </div>
 
@@ -200,13 +206,13 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
                   {/* Phone */}
                   <p className='flex items-center gap-2'>
                     <Phone size={18} />
-                    <span className='text-sm'>{contactDetails?.phone}</span>
+                    <span className='text-sm'>{contactDetails?.phone || 'Not specified'}</span>
                   </p>
 
                   {/* Location */}
                   <p className='flex items-center gap-2'>
                     <MapPin size={18} />
-                    <span className='text-sm'>{location}</span>
+                    <span className='text-sm'>{location || 'Not specified'}</span>
                   </p>
 
                   {/* Email */}
@@ -235,7 +241,7 @@ const ProfileSheet = ({ trigger }: { trigger: React.ReactNode }) => {
                     <p className='text-sm'>You haven&apos;t entered any interest yet.</p>
                   ) : (
                     <>
-                      {interests?.map(interest => (
+                      {interests?.map((interest: string) => (
                         <InterestCard key={interest} interest={interest} />
                       ))}
                     </>

@@ -11,7 +11,6 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import useApi from '@/hooks/useApi'
 import { cn } from '@/lib/utils'
-import { setUser } from '@/store/reducers/authSlice'
 import {
   EmailRegistrationFormData,
   EmailRegistrationResponse,
@@ -34,8 +33,6 @@ const EmailRegistrationDialog = ({
   isOpen: boolean
   setOpenForm: (formName: FormType) => void
 }) => {
-  const dispatch = useDispatch()
-
   const { toast } = useToast()
 
   const { createData, loading: isRegistering } = useApi<
@@ -63,20 +60,29 @@ const EmailRegistrationDialog = ({
         email: values.email,
         password: values.password,
       }
+
       const response = await createData('auth/register', registrationData)
-
-      dispatch(setUser({ user: response?.user, token: '' }))
-
       toast({
-        title: `${response.message}! Now Please take a time to setup your profile!`,
+        title: `${response.message}! Please login to your account to continue!`,
       })
+      setOpenForm('login')
 
-      setStep(2)
+      // Helpful for sending user to profile creation form after registration. Api needs to be fixed for this. Generate a token after registration since profile edit requires token.
+      // dispatch(setUser({ user: response?.user, token: '' }))
+
+      // toast({
+      //   title: `${response.message}! Now Please take a time to setup your profile!`,
+      // })
+
+      // setStep(2)
+
+      return true
     } catch (err) {
       toast({
         variant: 'destructive',
         title: `${err}`,
       })
+      return false
     }
   }
 
@@ -99,12 +105,7 @@ const EmailRegistrationDialog = ({
         },
       }
 
-      const response = await updateData('user/profile', profileDataPayload)
-
-      const userData = response?.data
-
-      // Unsolved mystery until api works
-      // dispatch(setUser({ user: userData, token: '' }));
+      await updateData('user/profile', profileDataPayload)
 
       toast({
         title: `Profile Created Successfully! You can now login to your account!`,

@@ -37,6 +37,7 @@ export interface LoginResponse {
   }
 }
 
+// Email registration form
 export interface EmailRegistrationResponse {
   status: string
   message: string
@@ -49,6 +50,7 @@ export interface EmailRegistrationFormData {
   passwordConfirm?: string
 }
 
+// user Profile form
 export interface ProfileData {
   profile: {
     fullname: string
@@ -83,22 +85,28 @@ export interface ProfileResponse {
   data: User
 }
 
+// Event
 export interface Event {
   name: string
   description: string
   tags: string[]
   startDate: Date
   endDate: Date
-  banner?: string
-  brochure?: string
+  banner?: File | string
+  brochure?: File | string
   timezone: string
   location: {
     type: 'online' | 'physical'
     meetingLink?: string
     address?: string
   }
-  creator: string
-  _id: string
-  eventCode: string
-  __v: number
+  creator?: string
+  _id?: string
+  eventCode?: string
+}
+
+export interface EventCreationResponse {
+  status: string
+  message: string
+  data: Event
 }

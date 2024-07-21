@@ -1,22 +1,23 @@
 'use client'
 
-import EventCard from '@/components/features/events/EventCard'
 import TagCard from '@/components/features/events/TagCard'
 import AvatarStack from '@/components/features/users/AvatarStack'
 import { Button } from '@/components/ui/button'
 import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
-import GridContainer from '@/components/ui/containers/GridContainer'
 import { Separator } from '@/components/ui/separator'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
-import EVENTS from '@/consts/Events'
 import { Event } from '@/types'
-import { CalendarDays, Clock9, Copy, File, MapPin } from 'lucide-react'
+import { format } from 'date-fns'
+import { CalendarCheck, CalendarDays, Copy, File, Link2, MapPinned } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 // Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
 const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent: boolean }) => {
+  const isAddressPhysical = event?.location?.type === 'physical'
+
   return (
     <section className='col-span-full flex w-full flex-col justify-center gap-4 md:gap-8'>
       <div className='flex flex-col gap-4 md:flex-row md:items-center md:gap-0'>
@@ -26,19 +27,36 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
 
           <div className='flex flex-col items-start gap-2'>
             <time className='flex items-center justify-center gap-2'>
-              <CalendarDays className='text-white dark:text-background' fill='#B7B7BB' size={25} />
-              <Description className='text-primary'>{event?.startDate}</Description>
+              <CalendarDays className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+              <Description>
+                <strong>Start:</strong> {format(event?.startDate, 'PPP')}
+              </Description>
             </time>
 
             <time className='flex items-center justify-center gap-2'>
-              <Clock9 className='text-white dark:text-background' fill='#B7B7BB' size={25} />
-              <Description>{event?.endDate}</Description>
+              <CalendarCheck className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+              <Description>
+                <strong>End:</strong> {format(event?.endDate, 'PPP')}
+              </Description>
             </time>
 
             <span className='flex items-center justify-center gap-2'>
-              <MapPin className='text-white dark:text-background' fill='#B7B7BB' size={25} />
-              {/* <Description>{event?.location?.meetingLink || event?.location?.address}</Description> */}
-              <Description>Meeting Address</Description>
+              {isAddressPhysical ? (
+                <>
+                  <MapPinned className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+                  <Description>{event?.location?.address}</Description>
+                </>
+              ) : (
+                <>
+                  <Link2 className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+                  <Link
+                    className='flex-1 text-primary'
+                    target='_blank'
+                    href={event?.location?.meetingLink || '#'}>
+                    {event?.location?.meetingLink || 'Meeting Link'}
+                  </Link>
+                </>
+              )}
             </span>
           </div>
         </div>
@@ -46,7 +64,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         {/* Event Image */}
         <div className='relative aspect-video flex-1 overflow-hidden rounded-sm md:flex-[.6]'>
           <Image
-            src={event?.banner ? event.banner : DEFAULT_PLACEHOLDER_IMAGE}
+            src={event?.banner ? `${event.banner}` : DEFAULT_PLACEHOLDER_IMAGE}
             fill
             objectFit='cover'
             alt={`Image for event ${event?.name}`}
@@ -57,10 +75,12 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
 
       {/* Description & Tags */}
       <div className='flex flex-col items-start gap-4'>
-        <div className='flex flex-col gap-2'>
-          <Heading type='tertiary'>Event Description</Heading>
-          <Description className='text-justify'>{event?.description}</Description>
-        </div>
+        {event?.description && (
+          <div className='flex flex-col gap-2'>
+            <Heading type='tertiary'>Event Description</Heading>
+            <Description className='text-justify'>{event?.description}</Description>
+          </div>
+        )}
 
         <div className='flex flex-col gap-2'>
           <Heading type='tertiary'>Event Tags</Heading>
@@ -78,11 +98,11 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
           <Heading type='tertiary'>Event Brochure</Heading>
           <Description className='flex items-center gap-2'>
             <File className='cursor-pointer' size={20} />
-            <span>{event?.brochure || 'Brochure Here'}</span>
+            <span>{`${event?.brochure || 'Brochure Here'}`}</span>
           </Description>
         </div>
 
-        {isANewEvent && (
+        {isANewEvent || (
           <>
             <div className='flex flex-col gap-2'>
               <Heading type='tertiary'>Event Code</Heading>
@@ -122,7 +142,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         )}
       </div>
 
-      {isANewEvent && <Button className='max-w-72'>Register for this event</Button>}
+      {isANewEvent || <Button className='max-w-72'>Register for this event</Button>}
     </section>
   )
 }

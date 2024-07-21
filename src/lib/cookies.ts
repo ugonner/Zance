@@ -5,7 +5,6 @@ export const setCookie = (name: string, value: string, options: { [key: string]:
 
   let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
 
-  // Expiry date (default to "Session" if not specified)
   if (options.expires instanceof Date) {
     cookieString += `; expires=${options.expires.toUTCString()}`
   } else if (options.expires === 'forever') {
@@ -14,7 +13,11 @@ export const setCookie = (name: string, value: string, options: { [key: string]:
     cookieString += `; expires=${farFuture.toUTCString()}`
   } else if (typeof options.expires === 'number') {
     const expireDate = new Date()
-    expireDate.setTime(expireDate.getTime() + 23 * 60 * 60 * 1000 + 58 * 60 * 1000)
+    expireDate.setTime(expireDate.getTime() + options.expires * 1000)
+    cookieString += `; expires=${expireDate.toUTCString()}`
+  } else {
+    const expireDate = new Date()
+    expireDate.setTime(expireDate.getTime() + 59 * 60 * 1000)
     cookieString += `; expires=${expireDate.toUTCString()}`
   }
 
@@ -47,7 +50,7 @@ export const deleteCookie = (name: string, options: { [key: string]: any } = {})
   }
 
   // Set expiry date to a past date (Unix epoch past)
-  let deleteDate = new Date(0).toUTCString()
+  const deleteDate = new Date(0).toUTCString()
 
   // Construct the cookie string to delete the cookie
   let cookieString = `${encodeURIComponent(name)}=; expires=${deleteDate}`

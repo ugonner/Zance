@@ -5,7 +5,6 @@ import Heading from '@/components/ui/common/Heading'
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -13,6 +12,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import useApi from '@/hooks/useApi'
 import { getToken } from '@/store/reducers/authSlice'
+import { Event, EventCreationResponse } from '@/types'
 import { Box, CircleArrowLeft, SquarePlus } from 'lucide-react'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -22,7 +22,9 @@ import EventForm from './EventForm'
 const CreateEventDialog = () => {
   const token = useSelector(getToken)
 
-  const { createData, loading: isProcessing } = useApi<any, any>()
+  const { createData, loading: isProcessing } = useApi<Event, EventCreationResponse>()
+
+  const [open, setOpen] = useState(false)
 
   const { toast } = useToast()
 
@@ -33,7 +35,7 @@ const CreateEventDialog = () => {
   const isThirdStep = step == 3
   const isFourthStep = step == 4
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: Event) => {
     try {
       if (token) {
         const result = await createData('events', values, token)
@@ -48,7 +50,12 @@ const CreateEventDialog = () => {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={open}
+      onOpenChange={() => {
+        setStep(1)
+        setOpen(current => !current)
+      }}>
       <DialogTrigger asChild>
         <Button variant='ghost' className='hidden items-center justify-center gap-2 md:flex'>
           <SquarePlus size={18} strokeWidth={2} className='text-primary' />
@@ -84,8 +91,6 @@ const CreateEventDialog = () => {
         </DialogHeader>
 
         <EventForm step={step} setStep={setStep} onSuccess={onSubmit} isProcessing={isProcessing} />
-
-        <DialogFooter>{/* <Button type="submit">Save changes</Button> */}</DialogFooter>
       </DialogContent>
     </Dialog>
   )

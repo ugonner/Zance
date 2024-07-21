@@ -66,10 +66,10 @@ const formSchema = z
     }),
   })
   .superRefine((data, ctx) => {
-    if (data.endDate <= data.startDate) {
+    if (data.endDate < data.startDate) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'End date must be greater than start date',
+        message: 'End date must be greater than or equal to start date',
         path: ['endDate'],
       })
     }
@@ -115,14 +115,20 @@ const EventForm = ({
   const isFourthStep = step == 4
 
   // Refs for file inputs
-  const bannerInputRef = useRef(null)
-  const brochureInputRef = useRef(null)
+  const bannerInputRef = useRef<HTMLInputElement>(null)
+  const brochureInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      location: { type: 'online' },
+      name: '',
+      description: '',
+      tags: [],
+      startDate: new Date(),
+      endDate: new Date(),
+      timezone: '',
+      location: { type: 'online', meetingLink: '', address: '' },
     },
   })
 
@@ -177,8 +183,6 @@ const EventForm = ({
     ])
 
     if (isStepValid) {
-      console.log('EVENT VALUES', form.getValues())
-
       setStep(3)
     }
   }
@@ -187,6 +191,7 @@ const EventForm = ({
     const result = await onSuccess(values)
 
     if (result) {
+      form.reset()
       setCreatedEventCode(result?.data?.eventCode)
       setStep(4)
     }
@@ -243,7 +248,7 @@ const EventForm = ({
                         value: tag,
                       }))}
                       placeholder='Enter upto 5 tags'
-                      onChange={selected => field.onChange(selected.map(item => item.value))}
+                      onChange={selected => field.onChange(selected?.map(item => item?.value))}
                     />
                   </FormControl>
                   <FormMessage />
@@ -343,7 +348,7 @@ const EventForm = ({
                       mode='single'
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={date => date > new Date() || date < new Date('1900-01-01')}
+                      disabled={date => new Date() >= date}
                       initialFocus
                     />
 
@@ -375,7 +380,7 @@ const EventForm = ({
                       mode='single'
                       selected={field.value}
                       onSelect={field.onChange}
-                      disabled={date => date > new Date() || date < new Date('1900-01-01')}
+                      disabled={date => new Date() >= date}
                       initialFocus
                     />
 
@@ -394,7 +399,7 @@ const EventForm = ({
                   <FormControl>
                     <CreatableSelect
                       options={timezoneOptions}
-                      value={timezoneOptions.find(option => option.value === field.value)}
+                      value={timezoneOptions?.find(option => option.value === field.value)}
                       onChange={selectedOption => field.onChange(selectedOption?.value)}
                     />
                   </FormControl>
@@ -416,7 +421,6 @@ const EventForm = ({
                       onChange={selectedOption => field.onChange({ type: selectedOption?.value })}
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -467,9 +471,8 @@ const EventForm = ({
             <EventDetail
               event={{
                 ...form.getValues(),
-                startDate: format(form?.getValues()?.startDate, 'PPP'),
-                endDate: format(form?.getValues()?.endDate, 'PPP'),
               }}
+              isANewEvent={true}
             />
             <Button className='mt-4' type='submit'>
               {isProcessing ? (
