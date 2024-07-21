@@ -9,7 +9,7 @@ import React from 'react'
 const EventCard = ({ event }: { event: any }) => {
   return (
     <Link
-      href={`/events/${event?._id}`}
+      href={`/app/events/${event?._id}`}
       className='group col-span-full overflow-hidden rounded-sm md:col-span-2 lg:col-span-3'>
       <figure className='relative aspect-video overflow-hidden rounded-sm'>
         <Image

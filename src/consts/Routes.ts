@@ -1,7 +1,7 @@
 const ROUTES = {
-  HOME: '/',
-  AUTH: '/auth',
-  PROFILE_EDIT: '/profile/edit',
+  HOME: '/app',
+  AUTH: '/app/auth',
+  PROFILE_EDIT: '/app/profile/edit',
 }
 
 export default ROUTES

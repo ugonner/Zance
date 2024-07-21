@@ -4,10 +4,10 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const loggedInUser = request.cookies.get('token')
   if (!loggedInUser) {
-    return NextResponse.redirect(new URL('/auth', request.url))
+    return NextResponse.redirect(new URL('/app/auth', request.url))
   }
 }
 
 export const config = {
-  matcher: ['/', '/events/:path*', '/profile/:path*'],
+  matcher: ['/app', '/app/events/:path*', '/app/profile/:path*'],
 }

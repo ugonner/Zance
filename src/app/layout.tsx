@@ -1,6 +1,3 @@
-import { Toaster } from '@/components/ui/toaster'
-import ReduxProvider from '@/providers/ReduxProvider'
-import { ThemeProvider } from '@/providers/ThemeProvider'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
@@ -23,16 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='light'
-          enableSystem
-          disableTransitionOnChange>
-          <ReduxProvider>{children}</ReduxProvider>
-          <Toaster />
-        </ThemeProvider>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
