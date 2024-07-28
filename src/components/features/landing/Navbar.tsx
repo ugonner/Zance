@@ -17,7 +17,7 @@ interface LinkProps {
 const links: LinkProps[] = [
   { url: '#about', name: 'About Us' },
   { url: '#contact', name: 'Contact Us' },
-  { url: '#event', name: 'Create an Event' },
+  { url: ROUTES.HOME, name: 'Create an Event' },
 ]
 
 const Navbar: React.FC = () => {
@@ -80,9 +80,9 @@ const Navbar: React.FC = () => {
     <div className='bg-white-400 flex h-full items-center justify-between px-4 text-xl sm:px-8 md:px-12 lg:px-20 xl:px-48'>
       {/* LOGO */}
       <div className='md:hidden lg:flex xl:justify-center'>
-        <Link href='/' className='flex items-start justify-center p-1 font-semibold'>
+        <div className='flex items-start justify-center p-1 font-semibold'>
           <Logo />
-        </Link>
+        </div>
       </div>
       {/* LINKS */}
       <div className='hidden w-1/2 gap-4 md:flex'>
@@ -100,15 +100,15 @@ const Navbar: React.FC = () => {
           <motion.div
             variants={topVariants}
             animate={open ? 'opened' : 'closed'}
-            className='bg-black-400 h-1 w-10 origin-left rounded'></motion.div>
+            className='h-1 w-10 origin-left rounded bg-black-400'></motion.div>
           <motion.div
             variants={centerVariants}
             animate={open ? 'opened' : 'closed'}
-            className='bg-black-400 h-1 w-10 rounded'></motion.div>
+            className='h-1 w-10 rounded bg-black-400'></motion.div>
           <motion.div
             variants={bottomVariants}
             animate={open ? 'opened' : 'closed'}
-            className='bg-black-400 h-1 w-10 origin-left rounded'></motion.div>
+            className='h-1 w-10 origin-left rounded bg-black-400'></motion.div>
         </button>
         {/* MENU LIST */}
         {open && (
@@ -116,7 +116,8 @@ const Navbar: React.FC = () => {
             variants={listVariants}
             initial='closed'
             animate='opened'
-            className='bg-white-400 absolute left-0 top-0 z-40 flex h-screen w-screen flex-col items-center justify-center gap-8 text-2xl'>
+            className='absolute left-0 top-0 z-40 flex h-screen w-screen flex-col items-center justify-center gap-8 bg-gray-100 text-2xl'
+            onClick={() => setOpen(false)}>
             {links.map(link => (
               <motion.div variants={listItemVariants} className='' key={link.name}>
                 <Link href={link.url} className='text-black-400'>
@@ -132,12 +133,12 @@ const Navbar: React.FC = () => {
       </div>
       <div className='hidden items-center justify-center gap-2 md:flex'>
         <button
-          className='bg-black-400 mr-1 rounded px-2.5 py-3 text-gray-50'
+          className='mr-1 rounded bg-black-400 px-2.5 py-3 text-gray-50'
           onClick={() => router.push(ROUTES.AUTH)}>
           Login
         </button>
         {/* ?\this should be a dropdown */}
-        <button className='text-black-400 rounded border-2 border-black bg-gray-100 px-2.5 py-3'>
+        <button className='border-black rounded border-2 bg-gray-100 px-2.5 py-3 text-black-400'>
           En
         </button>
       </div>
