@@ -15,7 +15,7 @@ import Link from 'next/link'
 import React from 'react'
 
 // Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
-const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent: boolean }) => {
+const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent?: boolean }) => {
   const isAddressPhysical = event?.location?.type === 'physical'
 
   return (

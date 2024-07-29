@@ -98,6 +98,7 @@ const ProfileForm = ({
   // Feed existing user profile data in to the form
   useEffect(() => {
     if (profileData && isInEditMode) {
+      // @ts-ignore
       const profile = profileData?.data?.user?.profile
       form.reset({
         fullName: profile?.fullname || '',
@@ -110,6 +111,7 @@ const ProfileForm = ({
         interests: profile?.interests || [],
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, isInEditMode])
 
   const form = useForm<z.infer<typeof profileFormSchema>>({
