@@ -14,7 +14,7 @@ const MyEvents = () => {
   return (
     <GridContainer>
       {EVENTS.map(event => (
-        <EventCard key={event?.title} event={event} />
+        <EventCard key={event?.name} event={event} />
       ))}
     </GridContainer>
   )
