@@ -9,7 +9,7 @@ import whiteLogo from './../../../../public/white_logo.svg'
 const Footer = () => {
   return (
     <footer>
-      <div className='flex flex-col items-center justify-between gap-2 bg-lightBlue-400 px-4 py-10 text-gray-50 sm:flex-row sm:px-8 md:px-12 lg:px-20 xl:px-48'>
+      <div className='bg-lightBlue-400 flex flex-col items-center justify-between gap-2 px-4 py-10 text-gray-50 sm:flex-row sm:px-8 md:px-12 lg:px-20 xl:px-48'>
         <div className='md:hidden lg:flex xl:justify-center'>
           <Link href='/' className='flex items-start justify-center p-1 font-semibold'>
             <Image src={whiteLogo} alt='Zance logo' />
