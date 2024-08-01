@@ -1,6 +1,6 @@
 import ROUTES from '@/consts/Routes'
-import { deleteCookie } from '@/lib/Cookies'
 import { logout as signOut } from '@/store/reducers/authSlice'
+import { deleteCookie } from '@/utils/Cookies'
 import { useRouter } from 'next/navigation'
 import { useDispatch } from 'react-redux'
 
