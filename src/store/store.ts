@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage'
 
 // defaults to localStorage for web
 import authReducer from './reducers/authSlice'
+import eventReducer from './reducers/eventSlice'
 
 const persistConfig = {
   key: 'root',
@@ -13,6 +14,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  event: eventReducer,
   // Add other reducers here if needed
 })
 

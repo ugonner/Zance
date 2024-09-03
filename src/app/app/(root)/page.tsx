@@ -27,9 +27,9 @@ export default function Home() {
           <TabsList className='flex max-w-fit items-center justify-start gap-2'>
             <TabsTrigger value='mine'>My Events</TabsTrigger>
             <TabsTrigger value='all'>All</TabsTrigger>
-            <TabsTrigger value='attending'>Attending</TabsTrigger>
+            {/* <TabsTrigger value='attending'>Attending</TabsTrigger>
             <TabsTrigger value='saved'>Saved</TabsTrigger>
-            <TabsTrigger value='past'>Past</TabsTrigger>
+            <TabsTrigger value='past'>Past</TabsTrigger> */}
           </TabsList>
 
           {/* Search Input */}
@@ -47,7 +47,7 @@ export default function Home() {
           <TabsContent value='all'>
             <AllEvents />
           </TabsContent>
-          <TabsContent value='attending'>
+          {/* <TabsContent value='attending'>
             <AttendingEvents />
           </TabsContent>
           <TabsContent value='saved'>
@@ -55,7 +55,7 @@ export default function Home() {
           </TabsContent>
           <TabsContent value='past'>
             <PastEvents />
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </section>

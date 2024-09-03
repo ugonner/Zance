@@ -1,4 +1,5 @@
 import Heading from '@/components/ui/common/Heading'
+import { Event } from '@/types/index'
 import { format } from 'date-fns'
 import { Bookmark, Share } from 'lucide-react'
 import Image from 'next/image'
@@ -6,14 +7,14 @@ import Link from 'next/link'
 import React from 'react'
 
 // TODO: remove this any type from ts
-const EventCard = ({ event }: { event: any }) => {
+const EventCard = ({ event }: { event: Event }) => {
   return (
     <Link
       href={`/app/events/${event?._id}`}
       className='group col-span-full overflow-hidden rounded-sm md:col-span-2 lg:col-span-3'>
       <figure className='relative aspect-video overflow-hidden rounded-sm'>
         <Image
-          src={event?.banner}
+          src={event?.banner ? event?.banner : '/images/ai-workshop.jpg'}
           alt='Event Card'
           layout='fill'
           objectFit='cover'

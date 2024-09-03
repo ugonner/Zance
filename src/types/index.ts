@@ -110,3 +110,9 @@ export interface EventCreationResponse {
   message: string
   data: Event
 }
+
+export interface EventListResponse {
+  status: string
+  message: string
+  data: Event[]
+}
