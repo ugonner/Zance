@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 
 // TODO: Change this to the actual API URL once the cors issue is fixed
-// const API_BASE_URL = 'http://127.0.0.1:2500/api/v1'
+// const API_BASE_URL = 'http://localhost:2500/api/v1'
 const API_BASE_URL = 'https://zance-api.azurewebsites.net/api/v1'
 
 interface RequestOptions<T> {
