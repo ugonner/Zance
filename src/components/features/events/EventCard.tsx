@@ -5,16 +5,30 @@ import { Bookmark, Share } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { useEffect, useState } from 'react'
 
 // TODO: remove this any type from ts
 const EventCard = ({ event }: { event: Event }) => {
+  const [imageSrc, setImageSrc] = useState<string>('/images/ai-workshop.jpg')
+
+  useEffect(() => {
+    if (event?.banner && typeof event.banner !== 'string') {
+      const reader = new FileReader()
+      reader.onload = e => {
+        setImageSrc(e.target?.result as string)
+      }
+      reader.readAsDataURL(event.banner)
+    } else if (typeof event?.banner === 'string') {
+      setImageSrc(event.banner)
+    }
+  }, [event?.banner])
   return (
     <Link
       href={`/app/events/${event?._id}`}
       className='group col-span-full overflow-hidden rounded-sm md:col-span-2 lg:col-span-3'>
       <figure className='relative aspect-video overflow-hidden rounded-sm'>
         <Image
-          src={event?.banner ? event?.banner : '/images/ai-workshop.jpg'}
+          src={imageSrc}
           alt='Event Card'
           layout='fill'
           objectFit='cover'

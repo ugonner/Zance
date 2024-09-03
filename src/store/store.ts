@@ -14,7 +14,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  event: eventReducer,
+  events: eventReducer,
   // Add other reducers here if needed
 })
 

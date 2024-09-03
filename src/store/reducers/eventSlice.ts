@@ -13,8 +13,8 @@ const eventSlice = createSlice({
   name: 'events',
   initialState,
   reducers: {
-    setEvents(state, action: PayloadAction) {
-      state.eventList = action.payload.data
+    setEvents(state, action: PayloadAction<any>) {
+      state.eventList = action?.payload?.data
     },
   },
 })

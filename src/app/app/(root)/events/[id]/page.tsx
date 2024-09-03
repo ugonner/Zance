@@ -23,7 +23,7 @@ const EventDetailPage = () => {
         </Heading>
         <GridContainer>
           {EVENTS.map(event => (
-            <EventCard key={event?.name} event={event} />
+            <EventCard key={event?.name} event={event as any} />
           ))}
         </GridContainer>
       </section>
