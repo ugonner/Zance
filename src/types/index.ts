@@ -103,6 +103,7 @@ export interface Event {
   creator?: string
   _id?: string
   eventCode?: string
+  attendees?: string[]
 }
 
 export interface EventCreationResponse {

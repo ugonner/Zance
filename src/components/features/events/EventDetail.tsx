@@ -8,7 +8,7 @@ import Heading from '@/components/ui/common/Heading'
 import { Separator } from '@/components/ui/separator'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
 import { Event } from '@/types'
-import { format } from 'date-fns'
+import { format, isValid } from 'date-fns'
 import { CalendarCheck, CalendarDays, Copy, File, Link2, MapPinned } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,7 +17,24 @@ import React from 'react'
 // Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
 const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent?: boolean }) => {
   const isAddressPhysical = event?.location?.type === 'physical'
+  // Function to format the date using JavaScript's Date methods
+  // Function to format the date using JavaScript's Date methods
+  const formatDate = (date: string | Date | undefined) => {
+    if (!date) return 'Invalid date'
 
+    // Ensure the date is a Date object
+    const validDate = typeof date === 'string' ? new Date(date) : date
+
+    if (isNaN(validDate.getTime())) return 'Invalid date'
+
+    // Convert the date to a string format like "September 9, 2024"
+    return validDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+  console.log(event)
   return (
     <section className='col-span-full flex w-full flex-col justify-center gap-4 md:gap-8'>
       <div className='flex flex-col gap-4 md:flex-row md:items-center md:gap-0'>
@@ -29,14 +46,18 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             <time className='flex items-center justify-center gap-2'>
               <CalendarDays className='text-white dark:text-background' fill='#B7B7BB' size={28} />
               <Description>
-                <strong>Start:</strong> {format(event?.startDate, 'PPP')}
+                {/* <strong>Start:</strong> {format(event?.startDate, 'PPP')} */}
+                <strong>Start: </strong>
+                {formatDate(event?.startDate)}
               </Description>
             </time>
 
             <time className='flex items-center justify-center gap-2'>
               <CalendarCheck className='text-white dark:text-background' fill='#B7B7BB' size={28} />
               <Description>
-                <strong>End:</strong> {format(event?.endDate, 'PPP')}
+                {/* <strong>End:</strong> {format(event?.endDate, 'PPP')} */}
+                <strong>End: </strong>
+                {formatDate(event?.endDate)}
               </Description>
             </time>
 
@@ -114,6 +135,41 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             <div className='flex flex-col gap-2'>
               <Heading type='tertiary'>Event Attendees</Heading>
 
+              {(event?.attendees?.length as number) > 0 ? (
+                <div>
+                  <div className='flex items-center gap-2'>
+                    <AvatarStack
+                      size={10}
+                      images={[
+                        {
+                          src: 'https://github.com/torvalds.png',
+                          alt: 'User 1',
+                        },
+                        {
+                          src: 'https://github.com/johnpapa.png',
+                          alt: 'User 2',
+                        },
+                        {
+                          src: 'https://github.com/jessfraz.png',
+                          alt: 'User 3',
+                        },
+                      ]}
+                    />
+                    <p className='text-sm text-gray-400 dark:text-gray-200'>
+                      {event?.attendees?.length} Registered
+                      {/* 24 Registered */}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className='text-sm text-gray-400 dark:text-gray-200'>
+                    {event?.attendees?.length} Registered
+                    {/* 24 Registered */}
+                  </p>
+                </div>
+              )}
+              {/* 
               <div className='flex items-center gap-2'>
                 <AvatarStack
                   size={10}
@@ -133,10 +189,10 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
                   ]}
                 />
                 <p className='text-sm text-gray-400 dark:text-gray-200'>
-                  {/* {event?.attendees} Registered */}
+                  {event?.attendees?.length} Registered
                   24 Registered
                 </p>
-              </div>
+              </div> */}
             </div>
           </>
         )}
