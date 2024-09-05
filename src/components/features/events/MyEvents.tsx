@@ -32,7 +32,7 @@ const MyEvents = () => {
     const getEventList = async () => {
       try {
         if (token) {
-          await fetchData('events', token)
+          await fetchData('events/user/my_events', token)
         }
       } catch (err) {
         toast({
@@ -56,10 +56,20 @@ const MyEvents = () => {
       {loading ? (
         <Skeleton className='h-12 w-10/12' />
       ) : (
-        <GridContainer>
-          {eventListData?.data.length &&
-            eventListData?.data.map(event => <EventCard key={event?.name} event={event} />)}
-        </GridContainer>
+        <>
+          {eventListData?.data.length ? (
+            <GridContainer>
+              {eventListData?.data.map(event => <EventCard key={event?.name} event={event} />)}
+            </GridContainer>
+          ) : (
+            <div className='p-4 text-center'>
+              <h2 className='text-xl font-semibold'>No Events Found</h2>
+              <p className='text-gray-500'>
+                You currently have no events. Create an event or register for one to get started!
+              </p>
+            </div>
+          )}
+        </>
       )}
     </>
   )
