@@ -7,16 +7,23 @@ import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
 import { Separator } from '@/components/ui/separator'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
+import { getLoggedInUser } from '@/store/reducers/authSlice'
 import { Event } from '@/types'
 import { format, isValid } from 'date-fns'
 import { CalendarCheck, CalendarDays, Copy, File, Link2, MapPinned } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 // Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
 const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent?: boolean }) => {
   const isAddressPhysical = event?.location?.type === 'physical'
+  const user = useSelector(getLoggedInUser)
+  const loggedInUserId = user?._id // Adjust this depending on how your token stores the user info
+
+  // Check if the logged-in user is the event creator
+  const isCreator = event?.creator === loggedInUserId
   // Function to format the date using JavaScript's Date methods
   // Function to format the date using JavaScript's Date methods
   const formatDate = (date: string | Date | undefined) => {
@@ -34,7 +41,6 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       day: 'numeric',
     })
   }
-  console.log(event)
   return (
     <section className='col-span-full flex w-full flex-col justify-center gap-4 md:gap-8'>
       <div className='flex flex-col gap-4 md:flex-row md:items-center md:gap-0'>
@@ -199,6 +205,11 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       </div>
 
       {isANewEvent || <Button className='max-w-72'>Register for this event</Button>}
+      {isCreator && (
+        <Button className='max-w-72'>
+          <Link href={`/app/events/${event?._id}/edit`}>Edit Event</Link>
+        </Button>
+      )}
     </section>
   )
 }

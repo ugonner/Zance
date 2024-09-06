@@ -39,11 +39,11 @@ const EventCard = ({ event }: { event: Event }) => {
 
       <section className='flex items-start py-2'>
         <div className='flex flex-[4] flex-col justify-center gap-0.5 text-base'>
-          <h2 className='text-lg font-medium'>{event.name}</h2>
+          <h2 className='text-lg font-medium'>{event?.name}</h2>
           {/* <time className='text-primary'>{format(event?.date, 'PPP')}</time> */}
           <time className='text-primary'>Tuesday, 10th February</time>
-          {/* <p className='text-sm text-gray-400'>{event.location}</p> */}
-          <p className='text-sm text-gray-400'>Itahari, Nepal</p>
+          <p className='text-sm text-gray-400'>{event?.location?.address}</p>
+          {/* <p className='text-sm text-gray-400'>Itahari, Nepal</p> */}
         </div>
         <div className='flex flex-1 justify-end'>
           <Bookmark
