@@ -126,7 +126,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             <File className='cursor-pointer' size={20} />
             {event?.brochure ? (
               <Link
-                href={event?.brochure}
+                href={event?.brochure.toString()}
                 target='_blank'
                 className='flex items-center rounded-lg bg-[#FFF8EB] p-3 text-sm font-medium'>
                 Event Brochure
