@@ -25,7 +25,6 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
   // Check if the logged-in user is the event creator
   const isCreator = event?.creator === loggedInUserId
   // Function to format the date using JavaScript's Date methods
-  // Function to format the date using JavaScript's Date methods
   const formatDate = (date: string | Date | undefined) => {
     if (!date) return 'Invalid date'
 
@@ -125,7 +124,16 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
           <Heading type='tertiary'>Event Brochure</Heading>
           <Description className='flex items-center gap-2'>
             <File className='cursor-pointer' size={20} />
-            <span>{`${event?.brochure || 'Brochure Here'}`}</span>
+            {event?.brochure ? (
+              <Link
+                href={event?.brochure}
+                target='_blank'
+                className='flex items-center rounded-lg bg-[#FFF8EB] p-3 text-sm font-medium'>
+                Event Brochure
+              </Link>
+            ) : (
+              <span>Brochure Here</span>
+            )}
           </Description>
         </div>
 

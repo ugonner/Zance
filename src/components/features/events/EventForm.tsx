@@ -56,6 +56,8 @@ const formSchema = z
       .any()
       .refine(file => file instanceof File, 'Expected a file')
       .optional(),
+    // banner: z.string().optional(), // Expect a base64 string
+    // brochure: z.string().optional(), // Expect a base64 string
     startDate: z.date({ required_error: 'Start date is required' }),
     endDate: z.date({ required_error: 'End date is required' }),
     timezone: z.string().nonempty('Timezone is required'),
@@ -157,17 +159,21 @@ const EventForm = ({
   }
 
   // Handlers for custom file input triggers
+  // For banner
   const handleBannerClick = () => {
     if (bannerInputRef.current) {
       bannerInputRef.current.click()
     }
   }
 
+  // For brochure
   const handleBrochureClick = () => {
     if (brochureInputRef.current) {
       brochureInputRef.current.click()
     }
   }
+
+  // Handle the file change and set both the File and Base64 values
 
   const handleSecondNextClick = async () => {
     const isStepValid = await form.trigger([
@@ -283,9 +289,18 @@ const EventForm = ({
                           accept='image/*'
                           className='hidden'
                           ref={bannerInputRef}
+                          // onChange={e => {
+                          //   // Show the selected file in the input
+                          //   field.onChange(e.target.files?.[0]) // This will reflect the file chosen
+
+                          //   // Call the handler to convert to base64 and set in form
+                          //   handleFileChange(e, field)
+                          // }}
                           onChange={e =>
                             e.target.files ? field.onChange(e.target.files[0]) : null
                           }
+                          // onChange={handleBannerChange}
+                          // onChange={e => handleFileChange(e, field)}
                         />
                       </>
                     </FormControl>
@@ -312,9 +327,18 @@ const EventForm = ({
                           accept='.pdf'
                           className='hidden'
                           ref={brochureInputRef}
+                          // onChange={e => {
+                          //   // Show the selected file in the input
+                          //   field.onChange(e.target.files?.[0]) // This will reflect the file chosen
+
+                          //   // Call the handler to convert to base64 and set in form
+                          //   handleFileChange(e, field)
+                          // }}
                           onChange={e =>
                             e.target.files ? field.onChange(e.target.files[0]) : null
                           }
+                          // onChange={handleBrochureChange}
+                          // onChange={e => handleFileChange(e, field)}
                         />
                       </>
                     </FormControl>

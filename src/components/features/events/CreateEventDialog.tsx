@@ -35,18 +35,79 @@ const CreateEventDialog = () => {
   const isThirdStep = step == 3
   const isFourthStep = step == 4
 
+  const convertToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
+    })
+
   const onSubmit = async (values: Event) => {
+    console.log('Initial Values:', values)
+
+    // Update values with base64 strings
     try {
-      if (token) {
-        const result = await createData('events', values, token)
-        return result
+      // Convert banner to base64 if it is a File
+      if (values.banner instanceof File) {
+        values.banner = await convertToBase64(values.banner)
+      }
+
+      // Convert brochure to base64 if it is a File
+      if (values.brochure instanceof File) {
+        values.brochure = await convertToBase64(values.brochure)
       }
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: `${error}`,
-      })
+      console.error('Error converting files to base64:', error)
     }
+
+    console.log('Updated Values with Base64:', values)
+
+    // Proceed with the form submission
+    if (token) {
+      try {
+        const result = await createData('events', values, token)
+        return result
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: `${error}`,
+        })
+      }
+    }
+    // console.log('Initial Values:', values)
+
+    // // Extract files from values
+    // const { banner, brochure } = values
+
+    // try {
+    //   // Check if banner is a File and convert it to base64
+    //   if (banner instanceof File) {
+    //     const base64Banner = await convertToBase64(banner)
+    //     console.log('Base64 Banner:', base64Banner)
+    //   }
+
+    //   // Check if brochure is a File and convert it to base64
+    //   if (brochure instanceof File) {
+    //     const base64Brochure = await convertToBase64(brochure)
+    //     console.log('Base64 Brochure:', base64Brochure)
+    //   }
+    // } catch (error) {
+    //   console.error('Error converting files to base64:', error)
+    // }
+    // console.log(values)
+
+    // try {
+    //   if (token) {
+    //     const result = await createData('events', values, token)
+    //     return result
+    //   }
+    // } catch (error) {
+    //   toast({
+    //     variant: 'destructive',
+    //     title: `${error}`,
+    //   })
+    // }
   }
 
   return (
