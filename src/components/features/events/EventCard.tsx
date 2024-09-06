@@ -11,6 +11,22 @@ import { useEffect, useState } from 'react'
 const EventCard = ({ event }: { event: Event }) => {
   const [imageSrc, setImageSrc] = useState<string>('/images/ai-workshop.jpg')
 
+  const formatDate = (date: string | Date | undefined) => {
+    if (!date) return 'Invalid date'
+
+    // Ensure the date is a Date object
+    const validDate = typeof date === 'string' ? new Date(date) : date
+
+    if (isNaN(validDate.getTime())) return 'Invalid date'
+
+    // Convert the date to a string format like "September 9, 2024"
+    return validDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+
   useEffect(() => {
     if (event?.banner && typeof event.banner !== 'string') {
       const reader = new FileReader()
@@ -40,8 +56,9 @@ const EventCard = ({ event }: { event: Event }) => {
       <section className='flex items-start py-2'>
         <div className='flex flex-[4] flex-col justify-center gap-0.5 text-base'>
           <h2 className='text-lg font-medium'>{event?.name}</h2>
-          {/* <time className='text-primary'>{format(event?.date, 'PPP')}</time> */}
-          <time className='text-primary'>Tuesday, 10th February</time>
+          <time className='text-primary'>{format(event?.startDate, 'PPP')}</time>
+          {/* {formatDate(event?.endDate)} */}
+          {/* <time className='text-primary'>Tuesday, 10th February</time> */}
           <p className='text-sm text-gray-400'>{event?.location?.address}</p>
           {/* <p className='text-sm text-gray-400'>Itahari, Nepal</p> */}
         </div>
