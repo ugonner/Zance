@@ -58,8 +58,18 @@ const formSchema = z
       .optional(),
     // banner: z.string().optional(), // Expect a base64 string
     // brochure: z.string().optional(), // Expect a base64 string
-    startDate: z.date({ required_error: 'Start date is required' }),
-    endDate: z.date({ required_error: 'End date is required' }),
+    // startDate: z.date({ required_error: 'Start date is required' }),
+    // endDate: z.date({ required_error: 'End date is required' }),
+    eventDate: z.date({ required_error: 'Event date is required' }),
+    startTime: z
+      .string()
+      .nonempty('Start Time is required')
+      .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'Start Time must be in HH:mm format' }), // Time format validation
+    endTime: z
+      .string()
+      .nonempty('End Time is required')
+      .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'End Time must be in HH:mm format' }), // Time format validation
+
     timezone: z.string().nonempty('Timezone is required'),
     location: z.object({
       type: z.enum(['online', 'physical']),
@@ -68,13 +78,28 @@ const formSchema = z
     }),
   })
   .superRefine((data, ctx) => {
-    if (data.endDate < data.startDate) {
+    // convert start time and endtime to date objects for comparison
+    const [startHour, startMinute] = data.startTime.split(':').map(Number)
+    const [endHour, endMinute] = data.endTime.split(':').map(Number)
+
+    const startDate = new Date(1970, 0, 1, startHour, startMinute)
+    const endDate = new Date(1970, 0, 1, endHour, endMinute)
+
+    // check if endTime is before or equal to startTime
+    if (endDate <= startDate) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'End date must be greater than or equal to start date',
-        path: ['endDate'],
+        message: 'End time must be after start time',
+        path: ['endTime'],
       })
     }
+    // if (data.endDate < data.startDate) {
+    //   ctx.addIssue({
+    //     code: z.ZodIssueCode.custom,
+    //     message: 'End date must be greater than or equal to start date',
+    //     path: ['endDate'],
+    //   })
+    // }
 
     if (data.location.type === 'online' && !data.location.meetingLink) {
       ctx.addIssue({
@@ -127,8 +152,11 @@ const EventForm = ({
       name: '',
       description: '',
       tags: [],
-      startDate: new Date(),
-      endDate: new Date(),
+      // startDate: new Date(),
+      // endDate: new Date(),
+      eventDate: new Date(),
+      startTime: '',
+      endTime: '',
       timezone: '',
       location: { type: 'online', meetingLink: '', address: '' },
     },
@@ -179,8 +207,11 @@ const EventForm = ({
     const isStepValid = await form.trigger([
       'banner',
       'brochure',
-      'startDate',
-      'endDate',
+      'eventDate',
+      'startTime',
+      'endTime',
+      // 'startDate',
+      // 'endDate',
       'location',
       'location.address',
       'location.meetingLink',
@@ -349,6 +380,85 @@ const EventForm = ({
             </div>
 
             <div className='flex w-full flex-wrap items-center gap-4'>
+              {/* Event Date Input */}
+              <FormField
+                control={form.control}
+                name='eventDate'
+                render={({ field }) => (
+                  <FormItem className='flex flex-1 flex-col'>
+                    <FormLabel>Event Date</FormLabel>
+
+                    <FormControl>
+                      <Button
+                        variant={'outline'}
+                        className={cn(
+                          'w-full pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground',
+                        )}>
+                        {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                        <CalendarDays className='ml-auto h-4 w-4 opacity-50' />
+                      </Button>
+                    </FormControl>
+
+                    <Calendar
+                      mode='single'
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={date => new Date() >= date} // Disable past dates
+                      initialFocus
+                    />
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Start Time Input */}
+              <FormField
+                control={form.control}
+                name='startTime'
+                render={({ field }) => (
+                  <FormItem className='flex flex-1 flex-col'>
+                    <FormLabel>Start Time</FormLabel>
+
+                    <FormControl>
+                      <input
+                        type='time'
+                        className='input-field w-full'
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* End Time Input */}
+              <FormField
+                control={form.control}
+                name='endTime'
+                render={({ field }) => (
+                  <FormItem className='flex flex-1 flex-col'>
+                    <FormLabel>End Time</FormLabel>
+
+                    <FormControl>
+                      <input
+                        type='time'
+                        className='input-field w-full'
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* <div className='flex w-full flex-wrap items-center gap-4'>
               <FormField
                 control={form.control}
                 name='startDate'
@@ -379,9 +489,9 @@ const EventForm = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
 
-              <FormField
+            {/* <FormField
                 control={form.control}
                 name='endDate'
                 render={({ field }) => (
@@ -412,7 +522,7 @@ const EventForm = ({
                   </FormItem>
                 )}
               />
-            </div>
+            </div> */}
 
             <FormField
               control={form.control}

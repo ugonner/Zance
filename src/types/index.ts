@@ -90,8 +90,11 @@ export interface Event {
   name: string
   description: string
   tags: string[]
-  startDate: Date
-  endDate: Date
+  eventDate: Date
+  startTime: string
+  endTime: string
+  startDate?: Date
+  endDate?: Date
   banner?: File | string
   brochure?: File | string
   timezone: string

@@ -56,7 +56,16 @@ const EventCard = ({ event }: { event: Event }) => {
       <section className='flex items-start py-2'>
         <div className='flex flex-[4] flex-col justify-center gap-0.5 text-base'>
           <h2 className='text-lg font-medium'>{event?.name}</h2>
-          <time className='text-primary'>{format(event?.startDate, 'PPP')}</time>
+          <time className='text-primary'>
+            {
+              event?.eventDate
+                ? format(event.eventDate, 'PPP') // Render eventDate if it exists
+                : event?.startDate
+                  ? format(event.startDate, 'PPP') // Otherwise, render startDate if eventDate is not present
+                  : 'No Date Available' // Fallback if neither eventDate nor startDate are present
+            }
+          </time>
+          {/* <time className='text-primary'>{format(event?.startDate, 'PPP')}</time> */}
           {/* {formatDate(event?.endDate)} */}
           {/* <time className='text-primary'>Tuesday, 10th February</time> */}
           <p className='text-sm text-gray-400'>{event?.location?.address}</p>

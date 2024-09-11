@@ -51,7 +51,35 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             <time className='flex items-center justify-center gap-2'>
               <CalendarDays className='text-white dark:text-background' fill='#B7B7BB' size={28} />
               <Description>
-                {/* <strong>Start:</strong> {format(event?.startDate, 'PPP')} */}
+                <strong>Start: </strong>
+                {
+                  event?.eventDate
+                    ? `${formatDate(event.eventDate)} ${event?.startTime ? `at ${event.startTime}` : ''}` // Render eventDate and startTime if available
+                    : event?.startDate
+                      ? `${formatDate(event.startDate)} ${event?.startTime ? `at ${event.startTime}` : ''}` // Fallback to startDate and startTime if eventDate is not present
+                      : 'No Start Date Available' // Fallback message
+                }
+              </Description>
+            </time>
+
+            {/* End Date and Time */}
+            <time className='flex items-center justify-center gap-2'>
+              <CalendarCheck className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+              <Description>
+                <strong>End: </strong>
+                {
+                  event?.eventDate
+                    ? `${formatDate(event.eventDate)} ${event?.endTime ? `at ${event.endTime}` : ''}` // Render eventDate and endTime if available
+                    : event?.endDate
+                      ? `${formatDate(event.endDate)} ${event?.endTime ? `at ${event.endTime}` : ''}` // Fallback to endDate and endTime if eventDate is not present
+                      : 'No End Date Available' // Fallback message
+                }
+              </Description>
+            </time>
+            {/* <time className='flex items-center justify-center gap-2'>
+              <CalendarDays className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+              <Description>
+                <strong>Start:</strong> {format(event?.startDate, 'PPP')}
                 <strong>Start: </strong>
                 {formatDate(event?.startDate)}
               </Description>
@@ -60,11 +88,11 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             <time className='flex items-center justify-center gap-2'>
               <CalendarCheck className='text-white dark:text-background' fill='#B7B7BB' size={28} />
               <Description>
-                {/* <strong>End:</strong> {format(event?.endDate, 'PPP')} */}
+                <strong>End:</strong> {format(event?.endDate, 'PPP')}
                 <strong>End: </strong>
                 {formatDate(event?.endDate)}
               </Description>
-            </time>
+            </time> */}
 
             <span className='flex items-center justify-center gap-2'>
               {isAddressPhysical ? (

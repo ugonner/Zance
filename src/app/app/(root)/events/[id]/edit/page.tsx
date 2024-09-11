@@ -54,8 +54,18 @@ const editEventFormSchema = z
       .any()
       .refine(file => file instanceof File, 'Expected a file')
       .optional(),
-    startDate: z.date({ required_error: 'Start date is required' }),
-    endDate: z.date({ required_error: 'End date is required' }),
+    // startDate: z.date({ required_error: 'Start date is required' }),
+    // endDate: z.date({ required_error: 'End date is required' }),
+    eventDate: z.date({ required_error: 'Event date is required' }),
+    startTime: z
+      .string()
+      .nonempty('Start Time is required')
+      .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'Start Time must be in HH:mm format' }), // Time format validation
+    endTime: z
+      .string()
+      .nonempty('End Time is required')
+      .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, { message: 'End Time must be in HH:mm format' }), // Time format validation
+
     timezone: z.string().nonempty('Timezone is required'),
     location: z.object({
       type: z.enum(['online', 'physical']),
@@ -64,13 +74,28 @@ const editEventFormSchema = z
     }),
   })
   .superRefine((data, ctx) => {
-    if (data.endDate < data.startDate) {
+    // convert start time and endtime to date objects for comparison
+    const [startHour, startMinute] = data.startTime.split(':').map(Number)
+    const [endHour, endMinute] = data.endTime.split(':').map(Number)
+
+    const startDate = new Date(1970, 0, 1, startHour, startMinute)
+    const endDate = new Date(1970, 0, 1, endHour, endMinute)
+
+    // check if endTime is before or equal to startTime
+    if (endDate <= startDate) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'End date must be greater than or equal to start date',
-        path: ['endDate'],
+        message: 'End time must be after start time',
+        path: ['endTime'],
       })
     }
+    // if (data.endDate < data.startDate) {
+    //   ctx.addIssue({
+    //     code: z.ZodIssueCode.custom,
+    //     message: 'End date must be greater than or equal to start date',
+    //     path: ['endDate'],
+    //   })
+    // }
 
     if (data.location.type === 'online' && !data.location.meetingLink) {
       ctx.addIssue({
@@ -88,6 +113,7 @@ const EditEventPage = () => {
 
   const [isStartDateCalendarOpen, setIsStartDateCalendarOpen] = useState(false)
   const [isEndDateCalendarOpen, setIsEndDateCalendarOpen] = useState(false)
+  const [isEventDateCalendarOpen, setIsEventDateCalendarOpen] = useState(false)
 
   const { toast } = useToast()
 
@@ -123,8 +149,11 @@ const EditEventPage = () => {
       name: '',
       description: '',
       tags: [],
-      startDate: new Date(),
-      endDate: new Date(),
+      // startDate: new Date(),
+      // endDate: new Date(),
+      eventDate: new Date(),
+      startTime: '',
+      endTime: '',
       timezone: '',
       location: { type: 'online', meetingLink: '', address: '' },
     },
@@ -137,8 +166,11 @@ const EditEventPage = () => {
         name: event?.name || '',
         description: event?.description || '',
         tags: event?.tags || [],
-        startDate: event?.startDate ? new Date(event.startDate) : new Date(),
-        endDate: event?.endDate ? new Date(event.endDate) : new Date(),
+        // startDate: event?.startDate ? new Date(event.startDate) : new Date(),
+        // endDate: event?.endDate ? new Date(event.endDate) : new Date(),
+        eventDate: event?.eventDate ? new Date(event.eventDate) : new Date(),
+        startTime: event?.startTime || '',
+        endTime: event?.endTime || '',
         timezone: event?.timezone,
         location: event?.location || { type: 'online', meetingLink: '', address: '' },
       })
@@ -151,8 +183,11 @@ const EditEventPage = () => {
         name: values.name,
         description: values.description,
         tags: values.tags,
-        startDate: values.startDate,
-        endDate: values.endDate,
+        eventDate: values.eventDate,
+        startTime: values.startTime,
+        endTime: values.endTime,
+        // startDate: values.startDate,
+        // endDate: values.endDate,
         timezone: values.timezone,
         location: values.location,
       }
@@ -162,7 +197,7 @@ const EditEventPage = () => {
       toast({
         title: `Event Updated Successfully!`,
       })
-      router.refresh()
+      router.back()
     } catch (error) {
       toast({
         variant: 'destructive',
@@ -230,7 +265,89 @@ const EditEventPage = () => {
               </FormItem>
             )}
           />
-          <FormField
+          <div className='flex w-full flex-wrap items-center gap-4'>
+            <FormField
+              control={form.control}
+              name='eventDate'
+              render={({ field }) => (
+                <FormItem className='flex flex-1 flex-col'>
+                  <FormLabel>Event Date</FormLabel>
+                  <FormControl>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-full pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground',
+                      )}>
+                      {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                      <CalendarDays className='ml-auto h-4 w-4 opacity-50' />
+                    </Button>
+                  </FormControl>
+                  {/* {isEventDateCalendarOpen && (
+                    <Calendar
+                      mode='single'
+                      selected={field.value}
+                      onSelect={date => {
+                        field.onChange(date)
+                        setIsEventDateCalendarOpen(false) // Close the calendar when a date is selected
+                      }}
+                      disabled={date => new Date() >= date}
+                    />
+                  )} */}
+                  <Calendar
+                    mode='single'
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={date => new Date() >= date} // Disable past dates
+                    initialFocus
+                  />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='startTime'
+              render={({ field }) => (
+                <FormItem className='flex flex-1 flex-col'>
+                  <FormLabel>Start Time</FormLabel>
+
+                  <FormControl>
+                    <input
+                      type='time'
+                      className='input-field w-full'
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='endTime'
+              render={({ field }) => (
+                <FormItem className='flex flex-1 flex-col'>
+                  <FormLabel>End Time</FormLabel>
+
+                  <FormControl>
+                    <input
+                      type='time'
+                      className='input-field w-full'
+                      value={field.value || ''}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          {/* <FormField
             control={form.control}
             name='startDate'
             render={({ field }) => (
@@ -265,8 +382,8 @@ const EditEventPage = () => {
                 <FormMessage />
               </FormItem>
             )}
-          />
-          <FormField
+          /> */}
+          {/* <FormField
             control={form.control}
             name='endDate'
             render={({ field }) => (
@@ -301,7 +418,7 @@ const EditEventPage = () => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name='timezone'
