@@ -102,6 +102,7 @@ export interface Event {
     type: 'online' | 'physical'
     meetingLink?: string
     address?: string
+    postcode?: string
   }
   creator?: string
   _id?: string

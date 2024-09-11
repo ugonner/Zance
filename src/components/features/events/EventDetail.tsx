@@ -99,6 +99,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
                 <>
                   <MapPinned className='text-white dark:text-background' fill='#B7B7BB' size={28} />
                   <Description>{event?.location?.address}</Description>
+                  <Description>{event?.location?.postcode}</Description>
                 </>
               ) : (
                 <>

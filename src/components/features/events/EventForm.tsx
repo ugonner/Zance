@@ -75,6 +75,7 @@ const formSchema = z
       type: z.enum(['online', 'physical']),
       meetingLink: z.string().url({ message: 'Meeting link must be a valid URL' }).optional(),
       address: z.string().optional(),
+      postcode: z.string().optional(),
     }),
   })
   .superRefine((data, ctx) => {
@@ -114,6 +115,14 @@ const formSchema = z
         code: z.ZodIssueCode.custom,
         message: 'Address is required for physical events',
         path: ['location', 'address'],
+      })
+    }
+
+    if (data.location.type === 'physical' && !data.location.postcode) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please add postcode for physical events',
+        path: ['location', 'postcode'],
       })
     }
   })
@@ -158,7 +167,7 @@ const EventForm = ({
       startTime: '',
       endTime: '',
       timezone: '',
-      location: { type: 'online', meetingLink: '', address: '' },
+      location: { type: 'online', meetingLink: '', address: '', postcode: '' },
     },
   })
 
@@ -216,6 +225,7 @@ const EventForm = ({
       'location.address',
       'location.meetingLink',
       'location.type',
+      'location.postcode',
       'timezone',
     ])
 
@@ -569,6 +579,22 @@ const EventForm = ({
                     <FormLabel>Event Address</FormLabel>
                     <FormControl>
                       <Input placeholder='Enter event address' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {form.watch('location.type') === 'physical' && (
+              <FormField
+                control={form.control}
+                name='location.postcode'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Event Postcode</FormLabel>
+                    <FormControl>
+                      <Input placeholder='Enter event postcode' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -71,6 +71,7 @@ const editEventFormSchema = z
       type: z.enum(['online', 'physical']),
       meetingLink: z.string().url({ message: 'Meeting link must be a valid URL' }).optional(),
       address: z.string().optional(),
+      postcode: z.string().optional(),
     }),
   })
   .superRefine((data, ctx) => {
@@ -101,7 +102,23 @@ const editEventFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Meeting link is required for online events',
-        path: ['location', 'addss'],
+        path: ['location', 'meetinglink'],
+      })
+    }
+
+    if (data.location.type === 'physical' && !data.location.address) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Address is required for physical events',
+        path: ['location', 'address'],
+      })
+    }
+
+    if (data.location.type === 'physical' && !data.location.postcode) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Please add postcode for physical events',
+        path: ['location', 'postcode'],
       })
     }
   })
@@ -155,7 +172,7 @@ const EditEventPage = () => {
       startTime: '',
       endTime: '',
       timezone: '',
-      location: { type: 'online', meetingLink: '', address: '' },
+      location: { type: 'online', meetingLink: '', address: '', postcode: '' },
     },
   })
 
@@ -462,6 +479,22 @@ const EditEventPage = () => {
                   <FormLabel>Event Address</FormLabel>
                   <FormControl>
                     <Input placeholder='Enter event address' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {form.watch('location.type') === 'physical' && (
+            <FormField
+              control={form.control}
+              name='location.postcode'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Event Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder='Enter event postcode' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
