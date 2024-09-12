@@ -43,7 +43,7 @@ const EditProfilePage = () => {
       if (token) {
         const updatedUser = await updateData('user/profile', profileDataPayload, token)
 
-        const updatedFullname = updatedUser?.data?.profile?.fullname
+        const updatedFullname: any = updatedUser?.data?.profile?.fullname
         dispatch(setUserFullname({ fullname: updatedFullname }))
       }
 

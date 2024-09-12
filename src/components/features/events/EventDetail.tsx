@@ -5,14 +5,19 @@ import AvatarStack from '@/components/features/users/AvatarStack'
 import { Button } from '@/components/ui/button'
 import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
+import Loader from '@/components/ui/common/Loader'
 import { Separator } from '@/components/ui/separator'
+import { toast } from '@/components/ui/use-toast'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
+import useApi from '@/hooks/useApi'
 import { getLoggedInUser } from '@/store/reducers/authSlice'
+import { getToken } from '@/store/reducers/authSlice'
 import { Event } from '@/types'
 import { format, isValid } from 'date-fns'
 import { CalendarCheck, CalendarDays, Copy, File, Link2, MapPinned } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useParams, useRouter } from 'next/navigation'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
@@ -21,6 +26,9 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
   const isAddressPhysical = event?.location?.type === 'physical'
   const user = useSelector(getLoggedInUser)
   const loggedInUserId = user?._id // Adjust this depending on how your token stores the user info
+  const router = useRouter()
+  const token = useSelector(getToken)
+  const { deleteData, loading: isDeletingData } = useApi<{ token: string }, any>()
 
   // Check if the logged-in user is the event creator
   const isCreator = event?.creator === loggedInUserId
@@ -39,6 +47,22 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       month: 'long',
       day: 'numeric',
     })
+  }
+
+  const handleDelete = async () => {
+    try {
+      if (token) {
+        const deleteEvent = await deleteData(`events/${event?._id}`, token)
+      }
+      toast({ title: 'Event Deleted!' })
+      router.back()
+    } catch (error) {
+      console.log(error)
+      toast({
+        variant: 'destructive',
+        title: `${error}`,
+      })
+    }
   }
   return (
     <section className='col-span-full flex w-full flex-col justify-center gap-4 md:gap-8'>
@@ -246,6 +270,20 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         <Button className='max-w-72'>
           <Link href={`/app/events/${event?._id}/edit`}>Edit Event</Link>
         </Button>
+      )}
+      {isCreator && (
+        <>
+          <Button variant='destructive' className='max-w-72' onClick={handleDelete}>
+            {isDeletingData ? (
+              <span className='flex items-center gap-2'>
+                Deleting...
+                <Loader />
+              </span>
+            ) : (
+              <>Delete Event</>
+            )}
+          </Button>
+        </>
       )}
     </section>
   )

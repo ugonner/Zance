@@ -20,12 +20,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { timezoneOptions } from '@/consts/DateTime'
 import { locationOptions } from '@/consts/Events'
+import useApi from '@/hooks/useApi'
 import { cn } from '@/lib/utils'
+import { fetchTags, getTagList } from '@/store/reducers/eventSlice'
+import { AppDispatch } from '@/store/store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { BadgeCheck, CalendarDays, Copy, Upload } from 'lucide-react'
-import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch, useSelector } from 'react-redux'
 import CreatableSelect from 'react-select/creatable'
 import { z } from 'zod'
 
@@ -47,6 +51,7 @@ const formSchema = z
     tags: z
       .array(z.string())
       .min(1, { message: 'At least one tag is required' })
+      .max(5, { message: 'You can only select/add 5 tags' })
       .nonempty('Tags are required'),
     banner: z
       .any()
@@ -143,6 +148,16 @@ const EventForm = ({
   const { toast } = useToast()
 
   const [createdEventCode, setCreatedEventCode] = useState(null)
+
+  const dispatch = useDispatch<AppDispatch>()
+  const tagList = useSelector(getTagList)
+
+  useEffect(() => {
+    if (!tagList?.length) {
+      dispatch(fetchTags())
+      console.log(`Tag list.... ${tagList}`)
+    }
+  }, [dispatch, tagList])
 
   // Helpful derived states for reusability
   const isFirstStep = step === 1
@@ -294,8 +309,28 @@ const EventForm = ({
                         label: tag,
                         value: tag,
                       }))}
-                      placeholder='Enter upto 5 tags'
-                      onChange={selected => field.onChange(selected?.map(item => item?.value))}
+                      // options={tagList?.map(tag => ({ label: tag, value: tag }))}
+                      // placeholder='Enter upto 5 tags'
+                      // // onChange={selected => field.onChange(selected?.map(item => item?.value))}
+                      // onChange={selected => {
+                      //   const selectedTags = selected?.map(item => item.value)
+                      //   if (selectedTags.length <= 5) {
+                      //     field.onChange(selectedTags)
+                      //   }
+                      // }}
+                      options={
+                        Array.isArray(tagList)
+                          ? tagList.map(tag => ({ label: tag, value: tag }))
+                          : []
+                      } // Check if tagList is an array
+                      placeholder='Enter up to 5 tags'
+                      onChange={selected => {
+                        const selectedTags = selected?.map(item => item?.value)
+                        if (selectedTags.length <= 5) {
+                          field.onChange(selectedTags)
+                        }
+                      }}
+                      isClearable
                     />
                   </FormControl>
                   <FormMessage />

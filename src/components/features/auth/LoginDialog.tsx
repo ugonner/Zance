@@ -71,9 +71,9 @@ const LoginDialog = ({
       }
       const res = await createData('auth/login', loginCredentials)
 
-      const token = res.data.token
+      const token = res?.data?.token
 
-      const userData = res.data.user
+      const userData = res?.data?.user
 
       // @ts-ignore
       setCookie('token', token, { path: '/' })
@@ -85,7 +85,7 @@ const LoginDialog = ({
       form.reset()
 
       toast({
-        title: res.message,
+        title: res?.message,
       })
 
       router.push(ROUTES.HOME)

@@ -45,7 +45,15 @@ const useApi = <RequestBody, ResponseBody>() => {
         throw new Error(errorResponse.message || response.statusText)
       }
 
+      // Handle empty response body for DELETE or similar methods
+      if (response.status === 204) {
+        // No Content status
+        console.log(`no response.... but deleted`)
+        return null
+      }
+
       const result: ResponseBody = await response.json()
+
       setData(result)
       return result
     } catch (err) {

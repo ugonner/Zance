@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { timezoneOptions } from '@/consts/DateTime'
@@ -22,13 +23,15 @@ import { locationOptions } from '@/consts/Events'
 import useApi from '@/hooks/useApi'
 import { cn } from '@/lib/utils'
 import { getToken } from '@/store/reducers/authSlice'
+import { fetchTags, getTagList } from '@/store/reducers/eventSlice'
+import { AppDispatch } from '@/store/store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { BadgeCheck, CalendarDays, Copy, Upload } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CreatableSelect from 'react-select/creatable'
 import { z } from 'zod'
 
@@ -143,6 +146,16 @@ const EditEventPage = () => {
 
   const { updateData, loading: isUpdatingEvent } = useApi<any, any>()
 
+  const dispatch = useDispatch<AppDispatch>()
+  const tagList = useSelector(getTagList)
+
+  useEffect(() => {
+    if (!tagList?.length) {
+      dispatch(fetchTags())
+      console.log(`Tag list.... ${tagList}`)
+    }
+  }, [dispatch, tagList])
+
   useEffect(() => {
     const getEventDetail = async () => {
       try {
@@ -159,6 +172,24 @@ const EditEventPage = () => {
     }
     getEventDetail()
   }, [fetchData, toast, token])
+
+  // Refs for file inputs
+  const bannerInputRef = useRef<HTMLInputElement>(null)
+  const brochureInputRef = useRef<HTMLInputElement>(null)
+
+  // For banner
+  const handleBannerClick = () => {
+    if (bannerInputRef.current) {
+      bannerInputRef.current.click()
+    }
+  }
+
+  // For brochure
+  const handleBrochureClick = () => {
+    if (brochureInputRef.current) {
+      brochureInputRef.current.click()
+    }
+  }
 
   const form = useForm<z.infer<typeof editEventFormSchema>>({
     resolver: zodResolver(editEventFormSchema),
@@ -194,9 +225,21 @@ const EditEventPage = () => {
     }
   }, [eventDetail, form])
 
+  const convertToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
+    })
+
   const onSubmit = async (values: z.infer<typeof editEventFormSchema>) => {
     try {
-      const editPayload = {
+      // Preserve existing banner and brochure URLs if not provided
+      const existingBanner = form.getValues('banner') || ''
+      const existingBrochure = form.getValues('brochure') || ''
+
+      const editPayload: any = {
         name: values.name,
         description: values.description,
         tags: values.tags,
@@ -207,6 +250,19 @@ const EditEventPage = () => {
         // endDate: values.endDate,
         timezone: values.timezone,
         location: values.location,
+        // brochure: values.brochure,
+        // banner: values.banner,
+      }
+
+      if (values.banner instanceof File) {
+        const bannerToUpload = await convertToBase64(values.banner)
+        editPayload.banner = bannerToUpload
+      }
+
+      // Convert brochure to base64 if it is a File
+      if (values.brochure instanceof File) {
+        const brochureToUpload = await convertToBase64(values.brochure)
+        editPayload.brochure = brochureToUpload
       }
       if (token) {
         const updateEvent = await updateData(`events/${params.id}`, editPayload, token)
@@ -275,8 +331,18 @@ const EditEventPage = () => {
                       label: tag,
                       value: tag,
                     }))}
+                    options={
+                      Array.isArray(tagList) ? tagList.map(tag => ({ label: tag, value: tag })) : []
+                    } // Check if tagList is an array
                     placeholder='Enter up to 5 tags'
-                    onChange={selected => field.onChange(selected?.map(item => item?.value))}
+                    // onChange={selected => field.onChange(selected?.map(item => item?.value))}
+                    onChange={selected => {
+                      const selectedTags = selected?.map(item => item?.value)
+                      if (selectedTags.length <= 5) {
+                        field.onChange(selectedTags)
+                      }
+                    }}
+                    isClearable
                   />
                 </FormControl>
               </FormItem>
@@ -517,6 +583,80 @@ const EditEventPage = () => {
               )}
             />
           )}
+          <Separator />
+          <div className='flex flex-wrap items-center justify-center gap-4'>
+            <FormField
+              control={form.control}
+              name='banner'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <div
+                        onClick={handleBannerClick}
+                        className='flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 p-8 text-center text-sm'>
+                        <Upload size={20} />
+                        {field.value ? field?.value?.name : 'Upload to Edit Event Banner'}
+                      </div>
+                      <input
+                        type='file'
+                        accept='image/*'
+                        className='hidden'
+                        ref={bannerInputRef}
+                        // onChange={e => {
+                        //   // Show the selected file in the input
+                        //   field.onChange(e.target.files?.[0]) // This will reflect the file chosen
+
+                        //   // Call the handler to convert to base64 and set in form
+                        //   handleFileChange(e, field)
+                        // }}
+                        onChange={e => (e.target.files ? field.onChange(e.target.files[0]) : null)}
+                        // onChange={handleBannerChange}
+                        // onChange={e => handleFileChange(e, field)}
+                      />
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='brochure'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <div
+                        onClick={handleBrochureClick}
+                        className='flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 p-8 text-center text-sm'>
+                        <Upload size={20} />
+                        {field.value ? field?.value?.name : 'Upload to Edit Event Brochure'}
+                      </div>
+                      <input
+                        type='file'
+                        accept='.pdf'
+                        className='hidden'
+                        ref={brochureInputRef}
+                        // onChange={e => {
+                        //   // Show the selected file in the input
+                        //   field.onChange(e.target.files?.[0]) // This will reflect the file chosen
+
+                        //   // Call the handler to convert to base64 and set in form
+                        //   handleFileChange(e, field)
+                        // }}
+                        onChange={e => (e.target.files ? field.onChange(e.target.files[0]) : null)}
+                        // onChange={handleBrochureChange}
+                        // onChange={e => handleFileChange(e, field)}
+                      />
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <Button className='mt-4' type='submit'>
             {isUpdatingEvent ? (
               <span className='flex items-center gap-2'>

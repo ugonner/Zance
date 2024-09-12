@@ -63,7 +63,7 @@ const EmailRegistrationDialog = ({
 
       const response = await createData('auth/register', registrationData)
       toast({
-        title: `${response.message}! Please login to your account to continue!`,
+        title: `${response?.message}! Please login to your account to continue!`,
       })
       setOpenForm('login')
 
