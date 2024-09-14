@@ -28,7 +28,12 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
   const loggedInUserId = user?._id // Adjust this depending on how your token stores the user info
   const router = useRouter()
   const token = useSelector(getToken)
-  const { deleteData, loading: isDeletingData } = useApi<{ token: string }, any>()
+  const {
+    createData,
+    loading: isRegistering,
+    deleteData,
+    loading: isDeletingData,
+  } = useApi<any, any>()
 
   // Check if the logged-in user is the event creator
   const isCreator = event?.creator === loggedInUserId
@@ -62,6 +67,19 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         variant: 'destructive',
         title: `${error}`,
       })
+    }
+  }
+
+  const handleRegisterForEvent = async () => {
+    try {
+      if (token) {
+        const registerForEvent = await createData(`events/register/${event?._id}`, {}, token)
+      }
+      toast({ title: 'Registration Successful', variant: 'default' })
+      router.back()
+    } catch (error) {
+      console.log(error)
+      toast({ variant: 'destructive', title: `${error}` })
     }
   }
   return (
@@ -265,7 +283,17 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         )}
       </div>
 
-      {isANewEvent || <Button className='max-w-72'>Register for this event</Button>}
+      {isANewEvent || (
+        <Button onClick={handleRegisterForEvent} className='max-w-72'>
+          {isRegistering ? (
+            <span className='flex items-center gap-2'>
+              Registering... <Loader />
+            </span>
+          ) : (
+            <>Register for this event</>
+          )}
+        </Button>
+      )}
       {isCreator && (
         <Button className='max-w-72'>
           <Link href={`/app/events/${event?._id}/edit`}>Edit Event</Link>
