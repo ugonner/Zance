@@ -21,9 +21,18 @@ const EditProfilePage = () => {
 
   const { updateData, loading: isUpdatingProfile } = useApi<ProfileData, ProfileResponse>()
 
+  const convertToBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
+    })
+
   const onProfileSubmit = async (values: ProfileFormData) => {
     try {
-      const profileDataPayload = {
+      const existingProfilePhoto = values.profilePhoto || ''
+      const profileDataPayload: any = {
         profile: {
           fullname: values.fullName,
           professionalTitle: values.professionalTitle,
@@ -38,6 +47,13 @@ const EditProfilePage = () => {
             phone: values.phoneNumber,
           },
         },
+      }
+
+      //@ts-ignore
+      if (values.profilePhotoFile || values?.profilePhotoFile instanceof File) {
+        //@ts-ignore
+        const imageStringToUpload = await convertToBase64(values.profilePhoto)
+        profileDataPayload.imageString = imageStringToUpload
       }
 
       if (token) {

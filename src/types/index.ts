@@ -58,6 +58,7 @@ export interface ProfileData {
     workplace?: string
     location: string
     bio?: string
+    profilePhoto?: string
     interests: string[] | []
     socialLinks: {
       linkedIn: string
@@ -76,6 +77,9 @@ export interface ProfileFormData {
   workPlace?: string
   location: string
   bio?: string
+  profilePhoto?: string
+  profilePhotoFile?: string | File
+  imageString?: string
   interests: string[]
 }
 

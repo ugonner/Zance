@@ -19,7 +19,8 @@ import useApi from '@/hooks/useApi'
 import { getToken } from '@/store/reducers/authSlice'
 import { ProfileResponse } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useEffect } from 'react'
+import { BadgeCheck, CalendarDays, Copy, Upload } from 'lucide-react'
+import React, { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import CreatableSelect from 'react-select/creatable'
@@ -54,6 +55,10 @@ const profileFormSchema = z.object({
     .max(100, { message: 'Location must be at most 100 characters long' }),
   bio: z.string().max(1000, { message: 'Bio must be at most 1000 characters long' }).optional(),
   interests: z.array(z.string()),
+  profilePhotoFile: z
+    .any()
+    .optional()
+    .refine(file => !file || file instanceof File, 'Expected a file'),
 })
 
 const ProfileForm = ({
@@ -109,10 +114,19 @@ const ProfileForm = ({
         location: profile?.location || '',
         bio: profile?.bio || '',
         interests: profile?.interests || [],
+        // @ts-ignore
+        profilePhoto: profile?.profilePhoto || '',
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData, isInEditMode])
+
+  const profilePhotoInputRef = useRef<HTMLInputElement>(null)
+  const handleProfilePhotoClick = () => {
+    if (profilePhotoInputRef.current) {
+      profilePhotoInputRef.current.click()
+    }
+  }
 
   const form = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
@@ -280,6 +294,33 @@ const ProfileForm = ({
                   }
                   onChange={selected => field.onChange(selected.map(item => item.value))}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='profilePhotoFile'
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <>
+                  <div
+                    onClick={handleProfilePhotoClick}
+                    className='flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border-2 p-8 text-center text-sm'>
+                    <Upload />
+                    {field.value ? field?.value?.name : 'Upload a new profile picture to update'}
+                  </div>
+                  <input
+                    type='file'
+                    accept='image/*'
+                    className='hidden'
+                    ref={profilePhotoInputRef}
+                    onChange={e => (e.target.files ? field.onChange(e.target.files[0]) : null)}
+                  />
+                </>
               </FormControl>
               <FormMessage />
             </FormItem>
