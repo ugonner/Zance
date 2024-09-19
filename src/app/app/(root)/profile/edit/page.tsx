@@ -52,7 +52,7 @@ const EditProfilePage = () => {
       //@ts-ignore
       if (values.profilePhotoFile || values?.profilePhotoFile instanceof File) {
         //@ts-ignore
-        const imageStringToUpload = await convertToBase64(values.profilePhoto)
+        const imageStringToUpload = await convertToBase64(values.profilePhotoFile)
         profileDataPayload.imageString = imageStringToUpload
       }
 
