@@ -6,6 +6,7 @@ import FullPageError from '@/components/ui/common/FullPageError'
 import FullPageLoader from '@/components/ui/common/FullPageLoader'
 import Heading from '@/components/ui/common/Heading'
 import Loader from '@/components/ui/common/Loader'
+import RichEditor from '@/components/ui/common/RichTextEditor'
 import {
   Form,
   FormControl,
@@ -308,11 +309,12 @@ const EditEventPage = () => {
               <FormItem>
                 <FormLabel>Event Description</FormLabel>
                 <FormControl>
-                  <Textarea
+                  {/* <Textarea
                     rows={5}
                     placeholder='Enter event description (Max. 1000 characters)'
                     {...field}
-                  />
+                  /> */}
+                  <RichEditor placeholder='Enter event description (Max, 1000)' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

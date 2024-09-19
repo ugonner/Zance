@@ -5,6 +5,7 @@ import { Calendar } from '@/components/ui/calendar'
 import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
 import Loader from '@/components/ui/common/Loader'
+import RichEditor from '@/components/ui/common/RichTextEditor'
 import { DialogClose } from '@/components/ui/dialog'
 import {
   Form,
@@ -286,8 +287,12 @@ const EventForm = ({
                 <FormItem>
                   <FormLabel>Event Description</FormLabel>
                   <FormControl>
-                    <Textarea
+                    {/* <Textarea
                       rows={5}
+                      placeholder='Enter event description (Max. 1000 characters)'
+                      {...field}
+                    /> */}
+                    <RichEditor
                       placeholder='Enter event description (Max. 1000 characters)'
                       {...field}
                     />

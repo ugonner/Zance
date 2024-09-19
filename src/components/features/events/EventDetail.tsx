@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
 import Loader from '@/components/ui/common/Loader'
+import ReadText from '@/components/ui/common/ReadText'
 import { Separator } from '@/components/ui/separator'
 import { toast } from '@/components/ui/use-toast'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
@@ -175,7 +176,9 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         {event?.description && (
           <div className='flex flex-col gap-2'>
             <Heading type='tertiary'>Event Description</Heading>
-            <Description className='text-justify'>{event?.description}</Description>
+            <Description className='text-justify'>
+              <ReadText value={event?.description} />
+            </Description>
           </div>
         )}
 
