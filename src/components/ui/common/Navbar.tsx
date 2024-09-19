@@ -29,7 +29,8 @@ import { getFallbackProfile } from '@/utils/Users'
 import { Search } from 'lucide-react'
 import { CircleUser, LogOut, UserRoundCog } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Button } from '../button'
@@ -40,7 +41,9 @@ import Logo from './Logo'
 import ThemeToggler from './ThemeToggler'
 
 const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState('')
   const loggedInUser = useSelector(getLoggedInUser)
+  const router = useRouter()
 
   const { logout } = useLogout()
 
@@ -83,6 +86,13 @@ const Navbar = () => {
   // Also we need a sheet trigger while a user clicks profile
   const profileSheetTrigger = PROFILE_MENU.find(menu => menu.title.toLowerCase() === 'profile')
 
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      router.push(`/app/search?query=${searchQuery}`)
+    }
+  }
+
   return (
     <nav className='fixed z-40 w-full border-b bg-background px-4 py-0.5'>
       <Container className='flex items-center justify-between gap-2 text-sm'>
@@ -92,7 +102,15 @@ const Navbar = () => {
         {/* Mid */}
         <div className='relative hidden flex-[.8] items-center justify-center md:flex'>
           <Search className='absolute left-4 cursor-pointer' size={20} strokeWidth={2.75} />
-          <Input type='text' className='rounded-2xl pl-12' placeholder='Search Events' />
+          <form onSubmit={handleSearch}>
+            <Input
+              type='text'
+              className='rounded-2xl pl-12'
+              placeholder='Search Events'
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          </form>
         </div>
 
         {/* Left */}
