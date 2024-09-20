@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast'
 import EVENTS from '@/consts/Events'
 import useApi from '@/hooks/useApi'
 import { getToken } from '@/store/reducers/authSlice'
+import { Event } from '@/types/index'
 import { useParams } from 'next/navigation'
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
@@ -39,7 +40,14 @@ const EventDetailPage = () => {
       }
     }
     getEventDetail()
-  }, [fetchData, toast, token])
+  }, [fetchData, toast, token, params.id])
+
+  // Log eventDetail after it's updated
+  useEffect(() => {
+    if (eventDetail) {
+      console.log('Event Detail:', eventDetail?.data)
+    }
+  }, [eventDetail])
 
   return (
     <GridContainer>

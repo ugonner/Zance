@@ -110,8 +110,11 @@ export interface Event {
   }
   creator?: string
   _id?: string
+  attendeeCount?: Number
   eventCode?: string
-  attendees?: string[]
+  // attendees?: string[]
+  attendeeIds?: string[]
+  attendeeProfiles?: any[]
 }
 
 export interface EventCreationResponse {

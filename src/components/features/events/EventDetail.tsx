@@ -2,6 +2,7 @@
 
 import TagCard from '@/components/features/events/TagCard'
 import AvatarStack from '@/components/features/users/AvatarStack'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Description from '@/components/ui/common/Description'
 import Heading from '@/components/ui/common/Heading'
@@ -38,6 +39,9 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
 
   // Check if the logged-in user is the event creator
   const isCreator = event?.creator === loggedInUserId
+  const isAlreadyRegistered = event?.attendeeIds?.some(
+    attendeeId => attendeeId.toString() === loggedInUserId?.toString(),
+  )
   // Function to format the date using JavaScript's Date methods
   const formatDate = (date: string | Date | undefined) => {
     if (!date) return 'Invalid date'
@@ -88,8 +92,8 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       <div className='flex flex-col gap-4 md:flex-row md:items-center md:gap-0'>
         {/* Event name, time & location */}
         <div className='flex flex-col items-start gap-2 md:flex-1'>
-          <Heading type='secondary'>{event?.name}</Heading>
-
+          <Heading type='secondary'>{event?.name}</Heading>{' '}
+          {isAlreadyRegistered && <Badge variant='secondary'>Registered</Badge>}
           <div className='flex flex-col items-start gap-2'>
             <time className='flex items-center justify-center gap-2'>
               <CalendarDays className='text-white dark:text-background' fill='#B7B7BB' size={28} />
@@ -186,7 +190,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
           <Heading type='tertiary'>Event Tags</Heading>
 
           <div className='flex flex-wrap items-center gap-2'>
-            {event?.tags.map(tag => <TagCard key={tag} tag={tag} />)}
+            {event?.tags?.map(tag => <TagCard key={tag} tag={tag} />)}
           </div>
         </div>
       </div>
@@ -211,19 +215,46 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
           </Description>
         </div>
 
+        {/* Isaac's Version (Please edit if you have a better way) */}
+        <>
+          <div className='flex flex-col gap-2'>
+            <Heading type='tertiary'>Event Attendees </Heading>
+            {(event?.attendeeCount as number) > 0 ? (
+              <div>
+                <div className='flex items-center gap-2'>
+                  <AvatarStack
+                    size={10}
+                    images={event
+                      ?.attendeeProfiles!.filter(profile => profile.profilePhoto)
+                      .map(profile => ({
+                        src: profile.profilePhoto.toString(),
+                        alt: profile.fullname || 'Unknown User',
+                      }))}
+                  />
+                  <p className='text-sm text-gray-500 dark:text-gray-200'>
+                    {event?.attendeeCount?.toString()} Registered
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        </>
+
         {isANewEvent || (
           <>
-            <div className='flex flex-col gap-2'>
+            {/* <div className='flex flex-col gap-2'>
               <Heading type='tertiary'>Event Code</Heading>
               <Description className='flex items-center gap-2'>
                 <span>{event?.eventCode}</span> <Copy className='cursor-pointer' size={20} />
               </Description>
-            </div>
+            </div> */}
 
             <div className='flex flex-col gap-2'>
-              <Heading type='tertiary'>Event Attendees</Heading>
+              {/* <Heading type='tertiary'>Event Attendees</Heading> */}
 
-              {(event?.attendees?.length as number) > 0 ? (
+              {/* {(event?.attendees?.length as number) > 0 ? (
                 <div>
                   <div className='flex items-center gap-2'>
                     <AvatarStack
@@ -244,21 +275,19 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
                       ]}
                     />
                     <p className='text-sm text-gray-400 dark:text-gray-200'>
-                      {event?.attendees?.length} Registered
-                      {/* 24 Registered */}
+                      {event?.attendees?.length} Registered 24 Registered
                     </p>
                   </div>
                 </div>
               ) : (
                 <div>
                   <p className='text-sm text-gray-400 dark:text-gray-200'>
-                    {event?.attendees?.length} Registered
-                    {/* 24 Registered */}
+                    {event?.attendees?.length} Registered 24 Registered
                   </p>
                 </div>
-              )}
-              {/* 
-              <div className='flex items-center gap-2'>
+              )} */}
+
+              {/* <div className='flex items-center gap-2'>
                 <AvatarStack
                   size={10}
                   images={[
@@ -277,8 +306,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
                   ]}
                 />
                 <p className='text-sm text-gray-400 dark:text-gray-200'>
-                  {event?.attendees?.length} Registered
-                  24 Registered
+                  {event?.attendees?.length} Registered 24 Registered
                 </p>
               </div> */}
             </div>
@@ -287,7 +315,10 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       </div>
 
       {isANewEvent || (
-        <Button onClick={handleRegisterForEvent} className='max-w-72'>
+        <Button
+          onClick={handleRegisterForEvent}
+          className='max-w-72'
+          disabled={isAlreadyRegistered}>
           {isRegistering ? (
             <span className='flex items-center gap-2'>
               Registering... <Loader />
