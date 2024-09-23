@@ -9,6 +9,7 @@ import Heading from '@/components/ui/common/Heading'
 import Loader from '@/components/ui/common/Loader'
 import ReadText from '@/components/ui/common/ReadText'
 import { Separator } from '@/components/ui/separator'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { toast } from '@/components/ui/use-toast'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
 import useApi from '@/hooks/useApi'
@@ -20,7 +21,7 @@ import { CalendarCheck, CalendarDays, Copy, File, Link2, MapPinned } from 'lucid
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 // Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
@@ -74,6 +75,8 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       })
     }
   }
+
+  const triggerEventList = () => {}
 
   const handleRegisterForEvent = async () => {
     try {
@@ -347,8 +350,74 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
           </Button>
         </>
       )}
+      <AttendeeListSheet
+        trigger={
+          <Button onClick={triggerEventList}>
+            <span className='flex items-center gap-2'>View Attendees</span>
+          </Button>
+        }
+        attendees={event?.attendeeProfiles}
+      />
     </section>
   )
 }
 
 export default EventDetail
+
+const AttendeeListSheet = ({
+  trigger,
+  attendees,
+}: {
+  trigger: React.ReactNode
+  attendees: any[]
+}) => {
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const toggleSheet = () => {
+    setIsSheetOpen(currentState => !currentState)
+  }
+
+  const closeSheet = () => setIsSheetOpen(false)
+
+  return (
+    <Sheet open={isSheetOpen} onOpenChange={toggleSheet}>
+      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetContent>
+        <SheetHeader className='mt-8'>
+          <SheetTitle className='text-xl font-bold'>Event Attendees</SheetTitle>
+        </SheetHeader>
+        <Separator />
+        <section>
+          <div className='flex flex-col gap-4 py-3'>
+            {attendees?.length ? (
+              attendees?.map((attendee, index) => (
+                <div key={index} className='flex items-center gap-2'>
+                  <img
+                    src={attendee?.profilePhoto || '/placeholder-image.jpg'}
+                    alt={attendee?.fullname || 'Anonymous'}
+                    className='h-10 w-10 rounded-full object-cover'
+                  />
+
+                  <div className='flex flex-col'>
+                    <p className='text-lg font-semibold text-gray-700'>
+                      {attendee.fullname || 'Anonymous'}
+                    </p>
+                    <div className='text-sm text-gray-500'>
+                      {attendee?.professionalTitle && (
+                        <span>{attendee.professionalTitle || 'No Professional Title'}</span>
+                      )}
+                      {attendee?.workplace && (
+                        <span> / {attendee.workplace || 'No Company Name'}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No attendees yet</p>
+            )}
+          </div>
+        </section>
+      </SheetContent>
+    </Sheet>
+  )
+}
