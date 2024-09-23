@@ -356,7 +356,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             <span className='flex items-center gap-2'>View Attendees</span>
           </Button>
         }
-        attendees={event?.attendeeProfiles}
+        attendees={event?.attendeeProfiles as any[]}
       />
     </section>
   )
