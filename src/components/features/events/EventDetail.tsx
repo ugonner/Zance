@@ -10,19 +10,23 @@ import Loader from '@/components/ui/common/Loader'
 import ReadText from '@/components/ui/common/ReadText'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/components/ui/use-toast'
 import { DEFAULT_PLACEHOLDER_IMAGE } from '@/consts/Common'
 import useApi from '@/hooks/useApi'
 import { getLoggedInUser } from '@/store/reducers/authSlice'
 import { getToken } from '@/store/reducers/authSlice'
 import { Event } from '@/types'
+import { getFallbackProfile } from '@/utils/Users'
 import { format, isValid } from 'date-fns'
-import { CalendarCheck, CalendarDays, Copy, File, Link2, MapPinned } from 'lucide-react'
+import { CalendarCheck, CalendarDays, Copy, File, Link2, Linkedin, MapPinned } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
+
+import UserAvatar from '../users/UserAvatar'
 
 // Here isANewEvent is a boolean value to determine whether the event is new or not so that we can hide some of the fields while event creation that aren't available
 const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent?: boolean }) => {
@@ -317,20 +321,21 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
         )}
       </div>
 
-      {isANewEvent || (
-        <Button
-          onClick={handleRegisterForEvent}
-          className='max-w-72'
-          disabled={isAlreadyRegistered}>
-          {isRegistering ? (
-            <span className='flex items-center gap-2'>
-              Registering... <Loader />
-            </span>
-          ) : (
-            <>Register for this event</>
-          )}
-        </Button>
-      )}
+      {isANewEvent ||
+        (!isCreator && (
+          <Button
+            onClick={handleRegisterForEvent}
+            className='max-w-72'
+            disabled={isAlreadyRegistered}>
+            {isRegistering ? (
+              <span className='flex items-center gap-2'>
+                Registering... <Loader />
+              </span>
+            ) : (
+              <>Register for this event</>
+            )}
+          </Button>
+        ))}
       {isCreator && (
         <Button className='max-w-72'>
           <Link href={`/app/events/${event?._id}/edit`}>Edit Event</Link>
@@ -352,7 +357,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       )}
       <AttendeeListSheet
         trigger={
-          <Button onClick={triggerEventList}>
+          <Button onClick={triggerEventList} className='max-w-72'>
             <span className='flex items-center gap-2'>View Attendees</span>
           </Button>
         }
@@ -390,25 +395,35 @@ const AttendeeListSheet = ({
           <div className='flex flex-col gap-4 py-3'>
             {attendees?.length ? (
               attendees?.map((attendee, index) => (
-                <div key={index} className='flex items-center gap-2'>
-                  <img
-                    src={attendee?.profilePhoto || '/placeholder-image.jpg'}
-                    alt={attendee?.fullname || 'Anonymous'}
-                    className='h-10 w-10 rounded-full object-cover'
-                  />
+                <div key={index} className='flex items-center justify-between gap-4'>
+                  <div className='flex items-center gap-4'>
+                    <img
+                      src={attendee?.profilePhoto || '/placeholder-image.jpg'}
+                      alt={attendee?.fullname || 'Anonymous'}
+                      className='h-12 w-12 rounded-full object-cover'
+                    />
 
-                  <div className='flex flex-col'>
-                    <p className='text-lg font-semibold text-gray-700'>
-                      {attendee.fullname || 'Anonymous'}
-                    </p>
-                    <div className='text-sm text-gray-500'>
-                      {attendee?.professionalTitle && (
-                        <span>{attendee.professionalTitle || 'No Professional Title'}</span>
-                      )}
-                      {attendee?.workplace && (
-                        <span> / {attendee.workplace || 'No Company Name'}</span>
-                      )}
+                    <div className='flex flex-col'>
+                      <p className='text-lg font-semibold text-gray-700'>
+                        {attendee.fullname || 'Anonymous'}
+                      </p>
+                      <div className='text-sm text-gray-500'>
+                        {attendee?.professionalTitle && (
+                          <span>{attendee.professionalTitle || 'No Professional Title'}</span>
+                        )}
+                        {attendee?.workplace && (
+                          <span> / {attendee.workplace || 'No Company Name'}</span>
+                        )}
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Profile Button positioned at the extreme right */}
+                  <div className='flex'>
+                    <PublicProfileSheet
+                      userId={attendee?._id}
+                      trigger={<Button className='rounded-full px-4 py-2'>Profile</Button>}
+                    />
                   </div>
                 </div>
               ))
@@ -417,6 +432,131 @@ const AttendeeListSheet = ({
             )}
           </div>
         </section>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+const PublicProfileSheet = ({ userId, trigger }: { userId: string; trigger: React.ReactNode }) => {
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [profile, setProfile] = useState(null)
+  // const [loading, setLoading] = useState(false)
+  const toggleSheet = () => setIsSheetOpen(currentState => !currentState)
+
+  const { fetchData, loading, error, data: profileData } = useApi<any, any>()
+
+  const hasError = error && !profileData && !loading
+
+  useEffect(() => {
+    const getPublicProfile = async () => {
+      try {
+        await fetchData(`user/public-profile/${userId}`)
+        console.log(profileData)
+      } catch (error) {}
+    }
+    getPublicProfile()
+  }, [fetchData, userId])
+
+  const mappedUser = {
+    fullname: profileData?.data?.user?.fullname,
+    profilePhoto: profileData?.data?.user?.profilePhoto,
+    professionalTitle: profileData?.data?.user?.professionalTitle,
+    workplace: profileData?.data?.user?.workplace,
+    bio: profileData?.data?.user?.bio,
+    linkedIn: profileData?.data?.user?.linkedIn,
+  }
+  const fallbackProfile = getFallbackProfile(mappedUser.fullname)
+
+  return (
+    <Sheet open={isSheetOpen} onOpenChange={toggleSheet}>
+      <SheetTrigger asChild>{trigger}</SheetTrigger>
+      <SheetContent>
+        <SheetHeader className='mt-8'>
+          <SheetTitle className='text-xl font-bold'>Public Profile</SheetTitle>
+        </SheetHeader>
+        <Separator className='my-4' />
+        {hasError ? (
+          <section className='flex h-4/5 flex-col items-center justify-center gap-2'>
+            <Description className='text-center !text-base text-red-500'>
+              Something went very wrong!
+            </Description>
+          </section>
+        ) : (
+          <section>
+            <div className='flex flex-col justify-center gap-2'>
+              <h2 className='text-lg font-semibold'>Basic Information</h2>
+              {loading ? (
+                <Skeleton className='h-12 w-10/12' />
+              ) : (
+                <div className='flex flex-wrap items-center gap-4'>
+                  <div className='flex items-center gap-2'>
+                    <UserAvatar
+                      image={{
+                        src: mappedUser?.profilePhoto || null,
+                        alt: `Profile Image of User`,
+                      }}
+                      fallbackProfile={fallbackProfile}
+                    />
+                    <div className='fex flex-col justify-center'>
+                      <p className='text-sm font-semibold'>{mappedUser.fullname || 'Anonymous'}</p>
+                    </div>
+                  </div>
+                  {/* Workplace */}
+                  <Separator className='py-4' orientation='vertical' />
+                  <div className='flex flex-col justify-center'>
+                    <h2 className='text-sm font-semibold'>
+                      {mappedUser.professionalTitle || 'Professional Title Not Specified!'}
+                    </h2>
+                    {mappedUser.workplace && (
+                      <h3 className='text-sm text-gray-600 dark:text-gray-400'>
+                        {mappedUser.workplace}
+                      </h3>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Separator className='my-4' />
+
+            {/* Bio */}
+            <div className='flex flex-col justify-center gap-2'>
+              <h2 className='text-lg font-semibold'>Bio</h2>
+              {!loading && !mappedUser.bio ? (
+                <p className='text-sm'>No bio for user!</p>
+              ) : (
+                <>
+                  {loading ? (
+                    <Skeleton className='h-10' />
+                  ) : (
+                    <p className='text-sm'>{mappedUser.bio}</p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <Separator className='my-4' />
+
+            {/* Socials */}
+
+            <div className='flex flex-col justify-center gap-2'>
+              <h2 className='text-lg font-semibold'>Socials</h2>
+              {loading ? (
+                <Skeleton className='h-6 w-1/3' />
+              ) : mappedUser?.linkedIn ? (
+                <Link
+                  target='_blank'
+                  href={mappedUser?.linkedIn || '#'}
+                  className='flex items-center gap-2'>
+                  <Linkedin size={18} className='text-primary' />
+                  <p className='text-sm font-medium hover:font-semibold'>{mappedUser.fullname}</p>
+                </Link>
+              ) : (
+                <p className='text-sm'>No LinkedIn link specified yet</p>
+              )}
+            </div>
+          </section>
+        )}
       </SheetContent>
     </Sheet>
   )
