@@ -33,13 +33,13 @@ export default function Home() {
           </TabsList>
 
           {/* Search Input */}
-          <div className='relative max-w-xs'>
+          {/* <div className='relative max-w-xs'>
             <Input type='text' placeholder='Enter event code' className='mb-8 mt-4 px-4' />
             <SendHorizontal
               size={25}
               className='absolute right-4 top-1/2 z-10 -translate-y-1/2 cursor-pointer text-secondary/85'
             />
-          </div>
+          </div> */}
 
           <TabsContent value='mine'>
             <MyEvents />
