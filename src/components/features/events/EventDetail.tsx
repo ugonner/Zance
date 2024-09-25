@@ -41,6 +41,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
     deleteData,
     loading: isDeletingData,
   } = useApi<any, any>()
+  const [isCopied, setIsCopied] = useState(false)
 
   // Check if the logged-in user is the event creator
   const isCreator = event?.creator === loggedInUserId
@@ -72,7 +73,6 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       toast({ title: 'Event Deleted!' })
       router.back()
     } catch (error) {
-      console.log(error)
       toast({
         variant: 'destructive',
         title: `${error}`,
@@ -90,10 +90,33 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
       toast({ title: 'Registration Successful', variant: 'default' })
       router.back()
     } catch (error) {
-      console.log(error)
       toast({ variant: 'destructive', title: `${error}` })
     }
   }
+
+  const handleCopyClick = async () => {
+    try {
+      await navigator.clipboard.writeText(event?.eventCode)
+      setIsCopied(true)
+      toast({ title: 'Event code copied to clipboard!' })
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy: ', error)
+    }
+  }
+
+  // const handleCopyClick = () => {
+  //   if (!event?.eventCode) return
+  //   navigator.clipboard.writeText(event?.eventCode).then(
+  //     () => {
+  //       toast({ title: `Event code copied to clipboard` })
+  //     },
+  //     err => {
+  //       toast({ variant: 'destructive', title: `Failed to copy text: ${err}` })
+  //     },
+  //   )
+  // }
+
   return (
     <section className='col-span-full flex w-full flex-col justify-center gap-4 md:gap-8'>
       <div className='flex flex-col gap-4 md:flex-row md:items-center md:gap-0'>
@@ -246,6 +269,20 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
             ) : (
               <div></div>
             )}
+          </div>
+        </>
+        <>
+          <div className='flex flex-col gap-2'>
+            <Heading type='tertiary'>Event Code</Heading>
+            <Description className='flex items-center gap-2'>
+              <span>{event?.eventCode}</span>
+              <Copy
+                onClick={handleCopyClick}
+                className='cursor-pointer'
+                size={20}
+                strokeWidth={2.2}
+              />
+            </Description>
           </div>
         </>
 
