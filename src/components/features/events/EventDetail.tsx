@@ -96,7 +96,7 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
 
   const handleCopyClick = async () => {
     try {
-      await navigator.clipboard.writeText(event?.eventCode)
+      await navigator.clipboard.writeText(event?.eventCode as string)
       setIsCopied(true)
       toast({ title: 'Event code copied to clipboard!' })
       setTimeout(() => setIsCopied(false), 2000)
