@@ -27,7 +27,7 @@ import useLogout from '@/hooks/useLogout'
 import { getLoggedInUser } from '@/store/reducers/authSlice'
 import { getFallbackProfile } from '@/utils/Users'
 import { Search } from 'lucide-react'
-import { CircleUser, LogOut, UserRoundCog } from 'lucide-react'
+import { CircleUser, LogOut, SquarePen } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -55,7 +55,7 @@ const Navbar = () => {
     },
     {
       title: 'Edit Profile',
-      icon: React.createElement(UserRoundCog),
+      icon: React.createElement(SquarePen),
       path: ROUTES.PROFILE_EDIT,
     },
     {
