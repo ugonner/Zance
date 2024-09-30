@@ -19,7 +19,16 @@ import { getToken } from '@/store/reducers/authSlice'
 import { Event } from '@/types'
 import { getFallbackProfile } from '@/utils/Users'
 import { format, isValid } from 'date-fns'
-import { CalendarCheck, CalendarDays, Copy, File, Link2, Linkedin, MapPinned } from 'lucide-react'
+import {
+  CalendarCheck,
+  CalendarDays,
+  Copy,
+  File,
+  Link2,
+  Linkedin,
+  MapPinned,
+  UserRound,
+} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
@@ -189,6 +198,21 @@ const EventDetail = ({ event, isANewEvent = false }: { event: Event; isANewEvent
                   </Link>
                 </>
               )}
+            </span>
+
+            {/* Creator Information */}
+            <span className='flex items-center justify-center gap-2'>
+              <>
+                <UserRound className='text-white dark:text-background' fill='#B7B7BB' size={28} />
+                <Description>{event?.creator?.profile?.fullname}</Description>
+                {/* Profile Button positioned at the extreme right */}
+                <div className='flex'>
+                  <PublicProfileSheet
+                    userId={event?.creator?._id}
+                    trigger={<Button className='rounded-full px-4 py-2'>Profile</Button>}
+                  />
+                </div>
+              </>
             </span>
           </div>
         </div>

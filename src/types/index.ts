@@ -108,7 +108,7 @@ export interface Event {
     address?: string
     postcode?: string
   }
-  creator?: string
+  creator?: any
   _id?: string
   attendeeCount?: Number
   eventCode?: string
