@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import useApi from '@/hooks/useApi'
 import { getToken } from '@/store/reducers/authSlice'
-import { ProfileResponse } from '@/types'
+import { ProfileFormData, ProfileResponse } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { BadgeCheck, CalendarDays, Copy, Upload } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
@@ -28,7 +28,7 @@ import { z } from 'zod'
 
 import CustomPhoneInput from './CustomPhoneInput'
 
-const profileFormSchema = z.object({
+export const profileFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: 'Full name must be at least 2 characters long' })
@@ -44,7 +44,7 @@ const profileFormSchema = z.object({
     .max(100, {
       message: 'Professional Title must be at most 100 characters long',
     }),
-  linkedInLink: z.string().url({ message: 'Please enter a valid URL' }),
+    linkedInLink: z.preprocess((value) => (value === "" ? undefined : value), z.string().url({message: "Enter a valid url"}).optional()),
   workPlace: z
     .string()
     .max(100, { message: 'Work place must be at most 100 characters long' })
@@ -67,7 +67,7 @@ const ProfileForm = ({
   isInEditMode = false,
 }: {
   isProcessing: boolean
-  onSuccess: (values: z.infer<typeof profileFormSchema>) => void
+  onSuccess: (values: z.infer<typeof profileFormSchema>) => Promise<void>
   isInEditMode?: boolean
 }) => {
   const token = useSelector(getToken)

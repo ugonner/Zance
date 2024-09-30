@@ -15,17 +15,22 @@ import {
   EmailRegistrationFormData,
   EmailRegistrationResponse,
   FormType,
+  LoginFormData,
+  LoginResponse,
   ProfileData,
   ProfileFormData,
   ProfileResponse,
+  User,
 } from '@/types'
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import { Button } from '../../ui/button'
 import EmailRegistrationForm from './EmailRegistrationForm'
-import ProfileForm from './ProfileForm'
-
+import ProfileForm, { profileFormSchema } from './ProfileForm'
+import { z } from 'zod';
+import { setUser } from '../../../store/reducers/authSlice';
+import { setCookie } from '../../../utils/Cookies'
 const EmailRegistrationDialog = ({
   isOpen,
   setOpenForm,
@@ -34,7 +39,7 @@ const EmailRegistrationDialog = ({
   setOpenForm: (formName: FormType) => void
 }) => {
   const { toast } = useToast()
-
+  const dispatch = useDispatch();
   const { createData, loading: isRegistering } = useApi<
     EmailRegistrationFormData,
     EmailRegistrationResponse
@@ -47,6 +52,7 @@ const EmailRegistrationDialog = ({
 
   // Helpful derived states for reusability
   const isFirstStep = step === 1
+  
 
   // A handler that will be executed when a user clicks login with email in the bottom section of the form
   const handleOpenLoginForm = () => {
@@ -61,20 +67,32 @@ const EmailRegistrationDialog = ({
         password: values.password,
       }
 
-      const response = await createData('auth/register', registrationData)
+      const response = await createData('auth/register', registrationData);
       toast({
         title: `${response?.message}! Please login to your account to continue!`,
+      });
+      //setOpenForm('login')
+      
+      const loginCredentials: LoginFormData = {
+        email: values.email,
+        password: values.password,
+      }
+      const res = await createData('auth/login', loginCredentials) as unknown as LoginResponse
+
+      const token = res?.data?.token
+      setCookie("token", token, {path: "/"});
+
+      const userData = res?.data?.user
+ 
+      // @ts-ignore
+      dispatch(setUser({ user: userData, token }))
+
+
+      toast({
+        title: `${response?.message}! Now Please take a time to setup your profile!`,
       })
-      setOpenForm('login')
 
-      // Helpful for sending user to profile creation form after registration. Api needs to be fixed for this. Generate a token after registration since profile edit requires token.
-      // dispatch(setUser({ user: response?.user, token: '' }))
-
-      // toast({
-      //   title: `${response.message}! Now Please take a time to setup your profile!`,
-      // })
-
-      // setStep(2)
+      setStep(2);
 
       return true
     } catch (err) {
@@ -86,7 +104,7 @@ const EmailRegistrationDialog = ({
     }
   }
 
-  const onProfileSubmit = async (values: ProfileFormData) => {
+  const onProfileSubmit = async (values: z.infer<typeof profileFormSchema>) => {
     try {
       const profileDataPayload = {
         profile: {

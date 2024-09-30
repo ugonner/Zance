@@ -61,7 +61,7 @@ export interface ProfileData {
     profilePhoto?: string
     interests: string[] | []
     socialLinks: {
-      linkedIn: string
+      linkedIn?: string
     }
     contactDetails: {
       phone: string
