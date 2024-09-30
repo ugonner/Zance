@@ -44,7 +44,10 @@ export const profileFormSchema = z.object({
     .max(100, {
       message: 'Professional Title must be at most 100 characters long',
     }),
-    linkedInLink: z.preprocess((value) => (value === "" ? undefined : value), z.string().url({message: "Enter a valid url"}).optional()),
+  linkedInLink: z.preprocess(
+    value => (value === '' ? undefined : value),
+    z.string().url({ message: 'Enter a valid url' }).optional(),
+  ),
   workPlace: z
     .string()
     .max(100, { message: 'Work place must be at most 100 characters long' })
@@ -67,7 +70,7 @@ const ProfileForm = ({
   isInEditMode = false,
 }: {
   isProcessing: boolean
-  onSuccess: (values: z.infer<typeof profileFormSchema>) => Promise<void>
+  onSuccess: (values: z.infer<typeof profileFormSchema | any>) => Promise<void>
   isInEditMode?: boolean
 }) => {
   const token = useSelector(getToken)
@@ -116,6 +119,8 @@ const ProfileForm = ({
         interests: profile?.interests || [],
         // @ts-ignore
         profilePhoto: profile?.profilePhoto || '',
+        profilePhotoFile: '',
+        imageString: '',
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
