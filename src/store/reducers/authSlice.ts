@@ -19,6 +19,10 @@ interface NamePayload {
   fullname: string
 }
 
+interface ProfilePhotoPayload {
+  profilePhoto: string
+}
+
 const initialState: AuthState = {
   user: null,
   token: null,
@@ -44,6 +48,17 @@ const authSlice = createSlice({
           },
         }
     },
+    setUserProfilePicture(state, action: PayloadAction<ProfilePhotoPayload>) {
+      if (state.user) {
+        state.user = {
+          ...state.user,
+          profile: {
+            ...state.user?.profile,
+            profilePhoto: action.payload?.profilePhoto,
+          },
+        }
+      }
+    },
     logout(state) {
       state.user = null
       state.isAuthenticated = false
@@ -51,7 +66,7 @@ const authSlice = createSlice({
   },
 })
 
-export const { setUser, setUserFullname, logout } = authSlice.actions
+export const { setUser, setUserFullname, setUserProfilePicture, logout } = authSlice.actions
 
 export default authSlice.reducer
 

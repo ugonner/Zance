@@ -67,7 +67,7 @@ export const profileFormSchema = z.object({
 const ProfileForm = ({
   isProcessing = false,
   onSuccess,
-  isInEditMode = false,
+  isInEditMode = true,
 }: {
   isProcessing: boolean
   onSuccess: (values: z.infer<typeof profileFormSchema | any>) => Promise<void>
@@ -85,7 +85,7 @@ const ProfileForm = ({
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!isInEditMode) return
+    // if (!isInEditMode) return
 
     const getUserProfile = async () => {
       try {
@@ -101,11 +101,11 @@ const ProfileForm = ({
     }
 
     getUserProfile()
-  }, [fetchData, toast, token, isInEditMode])
+  }, [fetchData, toast, token])
 
   // Feed existing user profile data in to the form
   useEffect(() => {
-    if (profileData && isInEditMode) {
+    if (profileData) {
       // @ts-ignore
       const profile = profileData?.data?.user?.profile
       form.reset({
@@ -124,7 +124,7 @@ const ProfileForm = ({
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profileData, isInEditMode])
+  }, [profileData])
 
   const profilePhotoInputRef = useRef<HTMLInputElement>(null)
   const handleProfilePhotoClick = () => {
@@ -154,7 +154,6 @@ const ProfileForm = ({
     //     variant: 'destructive',
     //     title: `You need to make some changes in order to continue!`,
     //   })
-
     onSuccess(values)
   }
 

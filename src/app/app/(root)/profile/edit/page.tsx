@@ -30,24 +30,48 @@ const EditProfilePage = () => {
     })
 
   const onProfileSubmit = async (values: ProfileFormData) => {
+    // try {
+    //   if (token) {
+    //     const updatedUser = await updateData('user/profile', values, token)
+    //     console.clear()
+    //     console.log(updatedUser)
+    //     router.refresh()
+    //   }
+    // } catch (error) {
+    //   toast({ title: `${error}`, variant: 'destructive' })
+    // }
     try {
       const existingProfilePhoto = values.profilePhoto || ''
       const profileDataPayload: any = {
-        profile: {
-          fullname: values.fullName,
-          professionalTitle: values.professionalTitle,
-          workplace: values.workPlace,
-          location: values.location,
-          bio: values.bio,
-          interests: values.interests,
-          socialLinks: {
-            linkedIn: values.linkedInLink,
-          },
-          contactDetails: {
-            phone: values.phoneNumber,
-          },
+        fullname: values.fullName,
+        professionalTitle: values.professionalTitle,
+        workplace: values.workPlace,
+        location: values.location,
+        bio: values.bio,
+        interests: values.interests,
+        socialLinks: {
+          linkedIn: values.linkedInLink,
+        },
+        contactDetails: {
+          phone: values.phoneNumber,
         },
       }
+      // const profileDataPayload: any = {
+      //   profile: {
+      //     fullname: values.fullName,
+      //     professionalTitle: values.professionalTitle,
+      //     workplace: values.workPlace,
+      //     location: values.location,
+      //     bio: values.bio,
+      //     interests: values.interests,
+      //     socialLinks: {
+      //       linkedIn: values.linkedInLink,
+      //     },
+      //     contactDetails: {
+      //       phone: values.phoneNumber,
+      //     },
+      //   },
+      // }
 
       //@ts-ignore
       if (values.profilePhotoFile || values?.profilePhotoFile instanceof File) {
