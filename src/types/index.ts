@@ -114,7 +114,8 @@ export interface Event {
   eventCode?: string
   // attendees?: string[]
   attendeeIds?: string[]
-  attendeeProfiles?: any[]
+  attendeeProfiles?: any[];
+  
 }
 
 export interface EventCreationResponse {
@@ -127,4 +128,10 @@ export interface EventListResponse {
   status: string
   message: string
   data: Event[]
+}
+
+export interface IApiResponse<T> {
+  message: string;
+  status: string;
+  data?: T;
 }

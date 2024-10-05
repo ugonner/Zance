@@ -18,7 +18,7 @@ import UserAvatar from '../users/UserAvatar'
 import EventCard from './EventCard'
 
 const eventCode = '1b9-2df' //this is a dummy event code
-const EventCheckIn = ({ event }: { event: Event }) => {
+export const EventCheckIn = ({ event }: { event: Event }) => {
   const token = useSelector(getToken)
   const { toast } = useToast()
 
