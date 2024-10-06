@@ -89,6 +89,18 @@ export interface ProfileResponse {
   data: User
 }
 
+export interface IUserProfile{ 
+  profilePhoto: string
+fullname: string
+workplace?: string
+professionalTitle: string
+location: string
+bio: string
+interests?: string[]
+joiningDate?: string;
+linkedIn?: string;
+} 
+
 // Event
 export interface Event {
   name: string

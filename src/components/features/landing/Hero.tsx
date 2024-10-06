@@ -10,6 +10,7 @@ import CreatableSelect from 'react-select/creatable'
 
 import EVENTS from '../../../consts/Events'
 import { Event } from '../../../types'
+import { Input } from '@/components/ui/input'
 
 export interface IEventCheckInPageParams {
   eventCode: string
@@ -42,6 +43,8 @@ export const Hero = () => {
       transition={{ duration: 1 }}>
       <form className='flex max-w-sm flex-col space-y-2'>
         <input
+          aria-controls='#checkin-event-search-box'
+          type='search'
           className='border-8 border-blue-100 px-6 py-4'
           value={checkInData.eventCode}
           placeholder='Enter Event Code'
@@ -54,6 +57,7 @@ export const Hero = () => {
         />
         <div className='relative border-8 px-6 py-4'>
           <input
+            type='email'
             className='border-blue-100'
             placeholder='Email'
             name='userEmail'
@@ -67,15 +71,18 @@ export const Hero = () => {
             width={24}
             height={24}
             role='button'
+            aria-label='click to go to checkin'
             onClick={() => {
-              router.push(`app/events/${checkInData.eventCode}/checkin`)
+              router.push(`/app/events/checkin/?eventCode=${checkInData.eventCode}&userEmail=${checkInData.userEmail}`)
             }}
           />
         </div>
-        {events?.length && displaySearchDropDown && (
-          <div className='relative border-8 px-6 py-4'>
+        {events?.length && displaySearchDropDown ? (
+          <div className='relative border-8 px-6 py-4' 
+          id='checkin-event-search-box'>
             {events.map(evt => (
               <div
+                key={evt._id}
                 className='m-2'
                 role='button'
                 onClick={() => {
@@ -86,7 +93,7 @@ export const Hero = () => {
               </div>
             ))}
           </div>
-        )}
+        ) : (<></>)}
       </form>
 
       <div className='mx-auto mt-10 flex h-full flex-col items-stretch justify-between gap-8 pb-5 xl:flex-row'>
