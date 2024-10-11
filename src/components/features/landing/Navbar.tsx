@@ -18,6 +18,7 @@ const links: LinkProps[] = [
   { url: '#about', name: 'About Us' },
   { url: '#contact', name: 'Contact Us' },
   { url: ROUTES.HOME, name: 'Create an Event' },
+  { url: ROUTES.EVENT_CHECKIN, name: 'Check into an Event' },
 ]
 
 const Navbar: React.FC = () => {
