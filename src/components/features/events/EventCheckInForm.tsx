@@ -22,7 +22,7 @@ export const EventCheckInForm = () => {
         else setInputError({...inputError, userEmail: ""});
     }
     if(/event/i.test(inputName)){
-      if(inputValue.length < 8) setInputError({...inputError, eventCode: "Invalid event code"});
+      if(inputValue.length < 6) setInputError({...inputError, eventCode: "Invalid event code"});
       else setInputError({...inputError, eventCode: ""});
     }
   
@@ -76,7 +76,7 @@ export const EventCheckInForm = () => {
             aria-label='click to go to checkin'
             onClick={() => {
               if(inputError.userEmail || inputError.eventCode) return;
-              router.push(`/app/events/checkin/?eventCode=${checkInData.eventCode}&userEmail=${checkInData.userEmail}`)
+              router.push(`/checkin/?eventCode=${checkInData.eventCode}&userEmail=${checkInData.userEmail}`)
             }}
           />
         </div>

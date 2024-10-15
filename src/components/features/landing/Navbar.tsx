@@ -86,7 +86,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
       {/* LINKS */}
-      <div className='hidden w-1/2 gap-4 md:flex'>
+      <div className='hidden gap-4 md:flex'>
         {links.map(link => (
           <NavLink link={link} key={link.name} />
         ))}

@@ -130,6 +130,11 @@ export interface Event {
   
 }
 
+export interface IEventCheckInDetail {
+  eventDetails: Partial<Event>;
+  attendeeDetails: Partial<IUserProfile>
+}
+
 export interface EventCreationResponse {
   status: string
   message: string

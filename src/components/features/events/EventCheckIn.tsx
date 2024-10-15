@@ -13,60 +13,76 @@ import { useSelector } from 'react-redux'
 import AvatarStack from '../users/AvatarStack'
 import UserAvatar from '../users/UserAvatar'
 import EventCard from './EventCard'
-import { IApiResponse, IUserProfile, User } from '../../../types'
+import { IApiResponse, IEventCheckInDetail, IUserProfile, User } from '../../../types'
 import { Event } from '@/types'
 import { Skeleton } from '../../ui/skeleton'
+import { useRouter } from 'next/navigation'
+import { ConfirmEventDialog } from './ConfirmEventDialog'
+import ROUTES from '../../../consts/Routes'
 
 const eventCode = '1b9-2df' //this is a dummy event code
 export const EventCheckIn = ({ eventCode, userEmail }: { eventCode: string; userEmail: string }) => {
-  const token = useSelector(getToken)
   const loggedInUser = useSelector(getLoggedInUser);
   const { toast } = useToast()
 
-  const {  loading, fetchData } = useApi<any, any>()
+  const {  loading,createData, fetchData } = useApi<any, any>()
   const [event, setEvent] = useState<Event>()
   const [user, setUser] = useState<IUserProfile>(loggedInUser?.profile as IUserProfile);
+   const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmDescription, setConfirmDescription] = useState("");
+
   useEffect(() => {
     console.log('MY EVENTS COMPONENT MOUNTED')
   }, [])
 
 
   useEffect(() => {
-    const getEventAndUser = async () => {
+    const validateEvent = async () => {
       try {
-        let eventRes: IApiResponse<Event> = {} as unknown as IApiResponse<Event>;
-        let userRes: IApiResponse<User> = {} as IApiResponse<User>;
-        if (token) {
-          eventRes = await fetchData(`events/${eventCode}`, token)
-          userRes = await fetchData(`user/${userEmail}`, token)
+        const res = await createData(`events/checkin/validate`, {
+          email: userEmail, eventCode
+        }) as IApiResponse<IEventCheckInDetail>;
+        if(res.data){
+          setEvent(res.data?.eventDetails as Event);
+          setUser(res.data?.attendeeDetails as IUserProfile)
         }
-        if(userRes.data){
-          const mappedUser: IUserProfile = {
-            fullname: userRes?.data?.profile?.fullname,
-            profilePhoto: userRes?.data?.profile?.profilePhoto,
-            professionalTitle: userRes?.data?.profile?.professionalTitle,
-            workplace: userRes?.data?.profile?.workplace,
-            bio: userRes?.data?.profile?.bio,
-            location: userRes?.data?.profile?.location,
-          };
-          setUser(mappedUser);
-        }
-        if(eventRes.data){
-          setEvent(eventRes.data)
-        }
-        //since we don't have get event by event code endpont; just set to one form EVENTS;
-        setEvent(EVENTS.find((evt) => evt.eventCode === eventCode) as unknown as Event)
-        
       } catch (err) {
         toast({
           variant: 'destructive',
           title: `Something went wrong while fetching data! ${err}`,
         })
+        
+      setConfirmTitle("Error Checking In");
+      setConfirmDescription((err as Error).message)
+      setConfirmOpen(true);
       }
     }
-    getEventAndUser();
+    validateEvent();
   }, [userEmail, eventCode])
+
+  const confirmEvent = async () => {
+    try{
+      const res = await createData(`/events/checkin/confirm`, {
+        email: userEmail,
+        eventCode
+      });
+      if(res.data) {
+        setConfirmTitle("Congratulations");
+        setConfirmDescription("You have been checked in to this event")
+        setConfirmOpen(true);
+      }
+    }catch(error){
+
+      setConfirmTitle("Error Checking In");
+      setConfirmDescription((error as Error).message)
+      setConfirmOpen(true);
+    }
+  }
+
   if(loading) return <Skeleton  />;
+  
   return (
     <>
       
@@ -83,7 +99,7 @@ export const EventCheckIn = ({ eventCode, userEmail }: { eventCode: string; user
           </Button>
         </div>
         <div className='flex flex-col gap-2 py-4 px-2'>
-          <Heading type='tertiary'>Confirm Profile </Heading>
+          <Heading type='tertiary'>Confirm Profile {user?.fullname}  </Heading>
           <div>
             <div className='flex flex-row  gap-2'>
               <div className="flex flex-col">
@@ -92,22 +108,29 @@ export const EventCheckIn = ({ eventCode, userEmail }: { eventCode: string; user
                   src: user?.profilePhoto || null,
                   alt: `Profile Image of User`,
                 }}
-                fallbackProfile={user.fullname}
+                fallbackProfile={user?.fullname}
               />
-              <p className="font-meduim text-sm">{user.fullname}</p>
+              <p className="font-meduim text-sm">{user?.fullname}</p>
               <p></p>
               </div>
               <div>
-                <h3>{user.professionalTitle}</h3>
-                <p>{user.location}</p>
+                <h3>{user?.professionalTitle}</h3>
+                <p>{user?.location}</p>
               </div>
             </div>
           </div>
-          <Button variant='link' className='text-lg'>
+          <Button variant='link' className='text-lg' onClick={confirmEvent}>
             
-            <span className='font-medium'>Confirm Event</span>
+            <span  className='font-medium'>Confirm Event</span>
           </Button>
         </div>
+        <ConfirmEventDialog
+        isOpen={confirmOpen}
+        onOpenChange={(confirmOpen) => {}}
+        toggleOpen={() => setConfirmOpen(!confirmOpen)}
+        title={confirmTitle}
+        description={confirmDescription}
+        />
       </div>
     </>
   )
